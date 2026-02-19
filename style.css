@@ -1,0 +1,134 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { 
+    height: 100%; 
+    font-family: Arial, sans-serif; 
+    background: #ffffff; 
+    overflow: hidden; 
+}
+
+h1 { 
+    background: rgb(6, 94, 3); 
+    color: white; 
+    text-align: center; 
+    padding: 15px; 
+    font-size: 20px; 
+    height: 55px; 
+}
+
+.container { 
+    display: flex; 
+    height: calc(100% - 55px); 
+    padding: 15px; 
+    gap: 30px; 
+}
+
+.mapa-area { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px; 
+    height: 100%; 
+}
+
+.ordem-primeiro { order: 1; }
+.ordem-segundo { order: 2; }
+
+.titulo-mapa { 
+    height: 45px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    font-size: 18px; 
+    color: #333;
+}
+
+.caixa-mapa {
+    background: transparent; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 5px; 
+    overflow: hidden; 
+}
+
+.caixa-maximizada { flex: 1; }
+
+/* AJUSTE AQUI: Removida opacidade baixa para o mapa não ficar claro demais */
+.caixa-minimizada { 
+    height: 120px; 
+    cursor: pointer; 
+    opacity: 1; 
+    border: none !important; 
+}
+
+svg { width: 100%; height: 100%; display: block; }
+
+path { 
+    fill: #eeeeee; 
+    stroke: #cccccc; 
+    stroke-width: 0.5; 
+}
+
+/* CORES MRV GERAL */
+.com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
+.com-mrv:hover { fill: rgb(255, 153, 0) !important; }
+.ativo { fill: rgb(255, 153, 0) !important; stroke: #000; stroke-width: 1px; }
+
+/* Faz com que TODAS as cidades do mapa pequeno fiquem bem visíveis */
+.caixa-minimizada path {
+    fill: #777777 !important; /* Um cinza grafite bem visível */
+    stroke: #555555;          /* Contorno um pouco mais escuro */
+}
+
+.info { 
+    flex: 0 0 600px; 
+    padding: 10px; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+#btRes-container { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    width: 100%; 
+}
+
+.btRes { 
+    width: 100%; 
+    padding: 14px 15px; 
+    border: 1px solid #eee; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    text-align: left; 
+    background: #fdfdfd; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    font-size: 14px;
+    color: #333;
+}
+
+.btRes:hover { 
+    background: rgb(6, 94, 3) !important; 
+    color: white !important; 
+}
+
+.btRes-ativo { 
+    outline: 3px solid black;
+    font-weight: bold;
+}
+
+#residencial-info { 
+    margin-top: 20px; 
+    padding: 20px; 
+    background: #fffcf5; 
+    border: 1px solid #ffeeba; 
+    border-left: 5px solid rgb(255, 153, 0); 
+    min-height: 100px; 
+    border-radius: 4px;
+
+}

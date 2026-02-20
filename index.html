@@ -1038,25 +1038,35 @@ class="regiao"
 
 
 
-    function gerarBotoes(id, nome) {
+function configurarEventos() {
+    const displayTexto = document.getElementById("nome-regiao");
+    document.querySelectorAll("path").forEach(path => {
+        path.addEventListener("mouseenter", () => {
+            if (!path.closest(".caixa-minimizada")) {
+                displayTexto.textContent = mapPathToName[path.id] || path.id;
+                if (path.classList.contains("com-mrv") && path !== pathSelecionado) path.style.fill = corLaranja;
+            }
+        });
+        path.addEventListener("mouseleave", () => {
+            if (!path.closest(".caixa-minimizada")) {
+                displayTexto.textContent = "Passe o mouse sobre uma região";
+                if (path.classList.contains("com-mrv") && path !== pathSelecionado) path.style.fill = corVerde;
+            }
+        });
+        path.addEventListener("click", (e) => {
+            if (path.closest(".caixa-minimizada") || !path.classList.contains("com-mrv")) return;
+            e.stopPropagation();
+            if (pathSelecionado) {
+                pathSelecionado.classList.remove("ativo");
+                pathSelecionado.style.fill = corVerde;
+            }
+            pathSelecionado = path;
+            path.classList.add("ativo");
+            path.style.fill = corLaranja;
+            gerarBotoes(path.id);
+        });
+    });
 
-        const lista = document.getElementById("btRes-container");
-
-        const filtrados = dadosGerais.filter(d => d.id === id);
-
-        lista.innerHTML = "";
-
-        document.getElementById("titulo-dinamico").textContent = "Residenciais em " + nome;
-
-        
-
-        if(filtrados.length === 0) {
-
-            lista.innerHTML = "<p style='color:#666'>Nenhum residencial encontrado nesta cidade.</p>";
-
-            return;
-
-        }
 
 
 

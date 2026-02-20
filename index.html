@@ -810,7 +810,45 @@ class="regiao"
         });
     }
 
-    function limparSelecao() {
+function limparSelecao() {
         document.querySelectorAll("path").forEach(p => p.classList.remove("ativo"));
         limparLista();
-        document.getElementById
+        document.getElementById("nome-regiao").textContent = "Selecione uma região";
+        pathSelecionado = null;
+    }
+
+    function limparLista() {
+        document.getElementById("btRes-container").innerHTML = "";
+        document.getElementById("titulo-dinamico").textContent = "";
+        document.getElementById("residencial-info").innerHTML = "";
+    }
+
+    function gerarBotoes(id, nomeExibicao) {
+        const lista = document.getElementById("btRes-container");
+        const filtrados = dadosGerais.filter(d => d.id === id);
+        lista.innerHTML = "";
+        document.getElementById("titulo-dinamico").textContent = "Residenciais em " + nomeExibicao;
+
+        filtrados.forEach(res => {
+            const corEst = (res.est > 0 && res.est <= 5) ? "red" : "black";
+            const btn = document.createElement("button");
+            btn.className = "btRes";
+            btn.innerHTML = `<strong>${res.nome}</strong> - <span style="color:${corEst}">${res.est} un.</span>`;
+            btn.onclick = () => {
+                document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
+                btn.classList.add("btRes-ativo");
+                document.getElementById("residencial-info").innerHTML = `
+                    <h3>${res.nome}</h3>
+                    <p>📍 ${res.end} - ${res.bai}</p>
+                    <p>💰 Valor: <strong>${res.val}</strong></p>
+                    <p>🔑 Previsão: <strong>${res.prev}</strong></p>
+                `;
+            };
+            lista.appendChild(btn);
+        });
+    }
+
+    carregarDados().then(iniciar);
+  </script>
+</body>
+</html>

@@ -1,127 +1,95 @@
+alert("O JavaScript carregou com sucesso!");
+// TESTE DE CARREGAMENTO
+console.log("Script iniciado!");
+
 const LINK_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqmzCyl1ScBsPr6d4wtq3tADya58_T9DVkhcUSDgmbwNwyZoc4tPrOMUrt8kB7UJH6tiHr_KVxfS2W/pub?output=csv";
-
 let dadosGerais = [];
-let pathSelecionado = null;
 
-async function carregarDados() {
-    console.log("Tentando carregar planilha...");
+// Função de carregamento
+async function carregarPlanilha() {
     try {
-        const resposta = await fetch(LINK_PLANILHA);
-        const texto = await resposta.text();
-        const linhas = texto.split(/\r?\n/).filter(l => l.trim() !== "");
-        dadosGerais = linhas.slice(1).map(linha => {
-            const col = linha.split(/[,;]/); 
+        const r = await fetch(LINK_PLANILHA);
+        const t = await r.text();
+        const linhas = t.split(/\r?\n/).filter(l => l.trim() !== "");
+        dadosGerais = linhas.slice(1).map(l => {
+            const c = l.split(/[,;]/);
             return {
-                idCidade: col[0]?.toLowerCase().trim(),
-                regiaoNome: col[1]?.trim(),
-                btNome: col[2]?.trim(),
-                estoque: col[3]?.trim(),
-                endereco: col[4]?.trim(),
-                bairro: col[5]?.trim(),
-                previsao: col[7]?.trim(),
-                valor: col[9]?.trim()
+                id: c[0]?.toLowerCase().trim(),
+                nome: c[2]?.trim(),
+                est: parseInt(c[3]) || 0,
+                end: c[4]?.trim(),
+                bai: c[5]?.trim(),
+                prev: c[7]?.trim(),
+                val: c[9]?.trim()
             };
-        }).filter(item => item.idCidade);
-        console.log("Dados carregados com sucesso:", dadosGerais.length, "itens.");
-    } catch (e) { console.error("Erro na planilha:", e); }
+        });
+        console.log("Dados prontos!");
+    } catch (e) { console.error("Erro na carga:", e); }
 }
 
-function iniciarDashboard() {
-    console.log("Iniciando eventos de clique...");
+// Função para aplicar os cliques
+function aplicarEventos() {
     const container = document.getElementById("mapa-area-container");
-    const tituloSuperior = document.getElementById("nome-regiao");
+    const tituloSup = document.getElementById("nome-regiao");
 
-    // 1. EVENTO DE TROCA DE MAPAS (CLIQUE NA CAIXA)
+    // CLIQUE NAS CAIXAS (Troca de lugar)
     document.querySelectorAll(".caixa-mapa").forEach(caixa => {
-        caixa.style.cursor = "pointer"; // Garante que o mouse mostre que é clicável
-        caixa.onclick = function() {
+        caixa.addEventListener("click", function() {
             if (this.classList.contains("caixa-minimizada")) {
-                console.log("Trocando mapas...");
-                const maximizadaAtual = document.querySelector(".caixa-maximizada");
+                const atualGrande = document.querySelector(".caixa-maximizada");
                 
+                // Troca física
                 this.classList.replace("caixa-minimizada", "caixa-maximizada");
-                maximizadaAtual.classList.replace("caixa-maximizada", "caixa-minimizada");
-
-                // Reordena no HTML
-                container.insertBefore(this, maximizadaAtual);
-                container.insertBefore(tituloSuperior, this);
+                atualGrande.classList.replace("caixa-maximizada", "caixa-minimizada");
                 
-                limparSelecao();
+                container.insertBefore(this, atualGrande);
+                container.insertBefore(tituloSup, this);
             }
-        };
+        });
     });
 
-    // 2. EVENTO DE CLIQUE NOS MUNICÍPIOS (PATHS)
-    document.querySelectorAll("path").forEach(path => {
-        path.onclick = function(e) {
-            // Se o mapa estiver pequeno, não faz nada com o path
+    // CLIQUE NOS PATHS (Cidades)
+    document.querySelectorAll("path").forEach(p => {
+        p.addEventListener("click", function(e) {
             if (this.closest(".caixa-minimizada")) return;
+            if (!this.classList.contains("com-mrv")) return;
+
+            e.stopPropagation(); // Não deixa a caixa trocar de lugar
             
-            // Só age se tiver a classe com-mrv
-            if (!this.classList.contains("com-mrv")) {
-                console.log("Clique em região sem MRV:", this.id);
-                return;
-            }
-
-            e.stopPropagation(); // Impede de disparar o clique na caixa pai
-            console.log("Cidade selecionada:", this.id);
-
-            if (pathSelecionado) pathSelecionado.classList.remove("ativo");
-            pathSelecionado = this;
+            // Destaque visual
+            document.querySelectorAll("path").forEach(x => x.classList.remove("ativo"));
             this.classList.add("ativo");
-            
-            // Atualiza o texto do mouse (opcional)
-            tituloSuperior.textContent = (this.id).toUpperCase();
-            
-            gerarBotoes(this.id);
-        };
+
+            // Mostrar botões
+            mostrarResidenciais(this.id);
+        });
     });
 }
 
-function limparSelecao() {
-    document.querySelectorAll("path").forEach(p => p.classList.remove("ativo"));
-    document.getElementById("btRes-container").innerHTML = "";
-    document.getElementById("titulo-dinamico").textContent = "";
-    document.getElementById("residencial-info").innerHTML = "";
-    pathSelecionado = null;
-}
-
-function gerarBotoes(pathId) {
-    const container = document.getElementById("btRes-container");
-    const filtrados = dadosGerais.filter(d => d.idCidade === pathId);
+function mostrarResidenciais(cidadeId) {
+    const lista = document.getElementById("btRes-container");
+    const filtrados = dadosGerais.filter(d => d.id === cidadeId);
     
-    container.innerHTML = "";
-    document.getElementById("titulo-dinamico").textContent = `MRV em ${pathId.toUpperCase()}`;
-
-    if(filtrados.length === 0) {
-        container.innerHTML = "<p>Nenhum dado encontrado para esta ID no CSV.</p>";
-        return;
-    }
+    lista.innerHTML = "";
+    document.getElementById("titulo-dinamico").textContent = "MRV em " + cidadeId.toUpperCase();
 
     filtrados.forEach(res => {
+        const cor = (res.est > 0 && res.est <= 5) ? "red" : "black";
         const btn = document.createElement("button");
         btn.className = "btRes";
-        let estNum = parseInt(res.estoque) || 0;
-        let corEst = estNum <= 5 ? "red" : "black";
-        
-        btn.innerHTML = `<strong>${res.btNome}</strong> - <span style="color:${corEst}">${res.estoque} un.</span>`;
+        btn.innerHTML = `<strong>${res.nome}</strong> - <span style="color:${cor}">restam ${res.est} un.</span>`;
         
         btn.onclick = () => {
-            document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
-            btn.classList.add("btRes-ativo");
             document.getElementById("residencial-info").innerHTML = `
-                <h3 style="color:rgb(6,94,3)">${res.btNome}</h3>
-                <p>📍 ${res.endereco} - ${res.bairro}</p>
-                <p>💰 Valor: ${res.valor}</p>
-                <p>🔑 Entrega: ${res.previsao}</p>
+                <h3>${res.nome}</h3>
+                <p>📍 ${res.end} - ${res.bai}</p>
+                <p>💰 Valor: ${res.val}</p>
+                <p>🔑 Entrega: ${res.prev}</p>
             `;
         };
-        container.appendChild(btn);
+        lista.appendChild(btn);
     });
 }
 
-// EXECUÇÃO INICIAL
-window.onload = async () => {
-    await carregarDados();
-    iniciarDashboard();
-};
+// Iniciar tudo
+carregarPlanilha().then(() => aplicarEventos());

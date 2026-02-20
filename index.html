@@ -824,42 +824,33 @@ class="regiao"
     }
 
     function gerarBotoes(id, nome) {
-        const lista = document.getElementById("btRes-container");
-        const filtrados = dadosGerais.filter(d => d.id === id);
-        lista.innerHTML = "";
-        document.getElementById("titulo-dinamico").textContent = "MRV em " + nome;
-        document.getElementById("residencial-info").style.display = "none";
+      const lista = document.getElementById("btRes-container");
+      const filtrados = dadosGerais.filter(d => d.id === id);
+      lista.innerHTML = "";
+      document.getElementById("titulo-dinamico").textContent = "MRV em " + nome;
+      
+      filtrados.forEach(res => {
+        let textoEstoque = res.est <= 5 ? `<span class="unidade-vermelha">restam ${res.est} unidades</span>` : `${res.est} unidades`;
+        if(res.est === 0) textoEstoque = "VENDIDO";
+
+        const btn = document.createElement("button");
+        btn.className = "btRes";
+        btn.innerHTML = `<strong>${res.nome}</strong> - ${textoEstoque}`;
         
-        filtrados.forEach(res => {
-            let textoEstoque = "";
-            let classeEstoque = "";
-
-            if (res.est === 0) {
-                textoEstoque = "VENDIDO";
-            } else if (res.est <= 5) {
-                textoEstoque = `restam ${res.est} unidades`;
-                classeEstoque = "unidade-vermelha";
-            } else {
-                textoEstoque = `${res.est} unidades`;
-            }
-
-            const btn = document.createElement("button");
-            btn.className = "btRes";
-            btn.innerHTML = `<strong>${res.nome}</strong> - <span class="${classeEstoque}">${textoEstoque}</span>`;
-            
-            btn.onclick = () => {
-                document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
-                btn.classList.add("btRes-ativo");
-                
-                const painel = document.getElementById("residencial-info");
-                painel.style.display = "block";
-                document.getElementById("info-nome-res").innerText = res.nome;
-                document.getElementById("info-endereco").innerText = `${res.end} - ${res.bai}`;
-                document.getElementById("info-valor").innerText = res.val || "Consulte";
-                document.getElementById("info-previsao").innerText = res.prev || "Consulte";
-            };
-            lista.appendChild(btn);
-        });
+        btn.onclick = () => {
+          document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
+          btn.classList.add("btRes-ativo");
+          document.getElementById("residencial-info").style.display = "block";
+          document.getElementById("info-nome-res").innerText = res.nome;
+          
+          // JUNÇÃO CORRIGIDA: ENDEREÇO + BAIRRO
+          document.getElementById("info-endereco").innerText = res.end + " - " + res.bai;
+          
+          document.getElementById("info-valor").innerText = res.val || "Consulte";
+          document.getElementById("info-previsao").innerText = res.prev || "Consulte";
+        };
+        lista.appendChild(btn);
+      });
     }
 
     carregarDados().then(iniciarEventos);

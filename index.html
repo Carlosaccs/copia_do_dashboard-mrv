@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard MRV - ZOOM ESTADO</title>
+  <title>Dashboard MRV - Sistema Unificado</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; background: #fff; }
@@ -28,6 +27,7 @@
     path { fill: #e0e0e0; stroke: #fff; stroke-width: 0.5; transition: fill 0.2s; cursor: default; }
     path:hover { fill: #bbb !important; }
     
+    /* Cidades com MRV ficam verdes */
     .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
     .com-mrv:hover { fill: rgb(255, 153, 0) !important; }
     .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 0.8px !important; }
@@ -50,7 +50,6 @@
       <div id="container-gsp" class="caixa-mapa caixa-maximizada" onclick="tentarTrocar(this)">
         <svg viewBox="80 -10 490 310" preserveAspectRatio="xMidYMid meet">
           <g transform="translate(110.74, 10) scale(0.2645)">
-
 
 <path
 d="m 264.68517,1004.1541 c -2.66972,-3.394 -3.30162,-3.4932 -22.61075,-3.5483 l -19.86427,-0.057 -17.92017,-24.21796 c -9.85609,-13.31987 -19.09402,-24.6418 -20.52872,-25.15984 -1.87337,-0.67645 -4.99504,1.1338 -11.07633,6.42316 -7.13738,6.20789 -8.90883,7.12901 -11.27494,5.86271 -1.54393,-0.82629 -3.95698,-1.50234 -5.36231,-1.50234 -1.40533,0 -5.31849,-1.05534 -8.69592,-2.34519 -5.51733,-2.10709 -6.14079,-2.82543 -6.14079,-7.07528 0,-4.10446 -0.66365,-4.97006 -5.01765,-6.54449 -4.35387,-1.57438 -5.01765,-2.44008 -5.01765,-6.54406 v -4.72965 h -12.90252 -12.90253 v 5.03573 c 0,4.75085 -0.46633,5.24254 -8.243278,8.69147 -9.249406,4.10194 -9.315051,4.09674 -26.163454,-2.07861 -11.258203,-4.1264 -13.576992,-4.4669 -30.464295,-4.47343 l -18.278578,-0.007 v -4.30084 c 0,-3.9595 0.398227,-4.30084 5.017649,-4.30084 3.054973,0 5.020145,-0.70095 5.024031,-1.79202 0.0035,-0.98561 -2.415714,-7.75042 -5.376052,-15.03292 -5.230097,-12.86615 -5.514304,-13.24147 -10.04168,-13.26092 -4.216746,-0.0181 -4.659245,-0.4285 -4.659245,-4.32087 0,-4.20527 0.159291,-4.30085 7.16807,-4.30085 3.942438,0 7.168069,-0.3639 7.168069,-0.80866 0,-0.44477 -1.612815,-4.33465 -3.584035,-8.64417 -4.968598,-10.86247 -4.756452,-12.05137 2.150421,-12.05137 5.082256,0 5.734456,-0.38766 5.734456,-3.4085 0,-1.87467 -0.954133,-4.20036 -2.120296,-5.16819 -3.034551,-2.51845 -0.210865,-7.7347 3.255699,-6.01431 1.346747,0.66836 6.319389,2.02428 11.050315,3.01315 4.730926,0.98887 11.109913,2.69124 14.175526,3.78304 3.065612,1.09179 6.129962,1.64138 6.809666,1.2213 0.679703,-0.42008 1.235824,-3.34962 1.235824,-6.51009 0,-5.28704 0.902256,-6.6266 11.288948,-16.76036 10.062996,-9.81794 11.484491,-11.87032 13.089561,-18.89892 0.990338,-4.33668 2.610709,-10.78794 3.600823,-14.33614 0.990115,-3.54819 2.603894,-10.32202 3.586175,-15.05294 1.946539,-9.37505 15.13579,-33.62483 18.31063,-33.66596 1.01753,-0.0132 3.7595,1.38774 6.09326,3.11316 4.1731,3.08531 4.59234,3.10967 25.37786,1.47461 17.07967,-1.34355 21.48175,-2.13721 22.94371,-4.13655 1.69876,-2.3232 2.2043,-2.282 8.29237,0.67581 3.56582,1.73242 6.72759,3.14984 7.02614,3.14984 0.29855,0 3.2624,-2.27215 6.58635,-5.04923 6.27503,-5.24263 6.39861,-5.24232 12.30993,0.0316 14.25443,12.71737 22.24617,19.71245 26.35984,23.07247 14.9204,12.1869 18.83449,17.02597 21.41134,26.47129 2.43151,8.9126 2.69092,9.24927 7.44373,9.66066 3.74954,0.32455 5.73295,-0.43441 8.31344,-3.18122 l 3.38903,-3.60746 5.3848,4.26484 c 2.96164,2.34566 8.25578,7.00284 11.76476,10.34928 5.57041,5.31239 6.49175,7.05971 7.26087,13.77018 0.60516,5.27984 2.13027,9.29185 4.87202,12.81653 2.19512,2.82194 4.38382,5.70521 4.86378,6.40727 0.47996,0.70206 8.08872,1.89655 16.90839,2.65442 18.33872,1.57584 22.45416,2.77251 23.7677,6.91109 1.30946,4.12577 6.97586,3.62876 15.79581,-1.38549 6.90055,-3.92304 19.18677,-10.0013 20.21602,-10.0013 0.27377,0 1.49857,1.93538 2.72181,4.30084 l 2.22405,4.30084 h 19.23236 c 10.5778,0 19.60583,-0.60427 20.06228,-1.34283 0.45646,-0.73856 2.59118,-2.24925 4.74385,-3.35709 2.15268,-1.10785 9.34337,-5.3424 15.97934,-9.41013 6.63598,-4.06772 12.30032,-7.16094 12.58744,-6.87381 0.28713,0.28712 1.10943,3.99698 1.82736,8.24413 0.71791,4.24714 1.72415,9.70573 2.23608,12.1302 l 0.93076,4.40812 -12.67309,2.51323 c -6.97022,1.38228 -14.4472,2.8368 -16.61554,3.23227 -4.71414,0.85977 -4.67965,0.59401 -1.01067,7.78579 l 2.93177,5.74674 -6.41107,-0.33186 c -3.86346,-0.19999 -7.4422,0.48454 -9.00593,1.72261 -4.13833,3.27653 -4.90878,3.83766 -16.6732,12.14336 -7.92852,5.59756 -13.96586,8.61787 -20.78741,10.39941 l -9.61368,2.51073 -0.44826,6.21435 c -0.65945,9.14195 4.99856,17.37909 11.93751,17.37909 h 4.99731 v 11.46891 11.46891 h -9.91837 -9.91838 l -3.28889,5.37605 c -1.80891,2.95683 -3.95818,6.06773 -4.77617,6.91311 -0.81801,0.84537 -3.10009,3.91005 -5.07131,6.81041 -2.37937,3.50088 -4.30684,4.97991 -5.73446,4.40033 -8.07759,-3.27935 -12.03653,-3.57367 -18.70981,-1.39096 -9.82852,3.21475 -10.56709,2.99784 -14.26331,-4.18876 -1.8249,-3.5482 -3.9282,-6.45127 -4.67399,-6.45127 -0.7458,0 -4.5849,2.90307 -8.53134,6.45127 -6.78921,6.10408 -7.62992,6.45126 -15.62199,6.45126 h -8.44664 v 6.97692 6.97689 l -7.13674,2.9659 -7.13676,2.9659 z"
@@ -397,16 +396,15 @@ d="m 658.02878,387.7869 c -0.78849,-0.27286 -5.73906,-0.91314 -11.00128,-1.42285
 id="santana"
 class="regiao"
 /> 
-
             
-            </g>
+            
+          </g>
         </svg>
       </div>
 
       <div id="container-esp" class="caixa-mapa caixa-minimizada" onclick="tentarTrocar(this)">
         <svg viewBox="540 -10 520 310" preserveAspectRatio="xMidYMid meet">
           <g transform="translate(592.4, 0) scale(0.2645)">
-
 
 <path
 d="m 952.17734,1103.3133 c -6.76641,-2.9518 -6.89946,-3.1323 -6.38728,-8.6643 0.41478,-4.48 -0.89506,-8.5609 -6.32696,-19.7122 -3.76752,-7.7344 -7.47348,-14.0625 -8.23546,-14.0625 -0.76199,0 -5.12722,2.2736 -9.70051,5.0525 l -8.31507,5.0526 -7.88488,-8.6695 c -4.33668,-4.7682 -8.56771,-8.6547 -9.40228,-8.6366 -0.83457,0.018 -5.24911,6.4842 -9.81008,14.3691 -4.56097,7.8848 -8.77688,14.3361 -9.36869,14.3361 -0.59181,0 -3.77394,-3.1996 -7.07141,-7.1102 l -5.99539,-7.1102 11.50543,-28.0702 c 6.32799,-15.4386 11.50544,-28.5987 11.50544,-29.2448 0,-0.646 -2.51904,-3.3192 -5.59788,-5.9404 l -5.59787,-4.7659 5.95628,-8.81956 c 3.27595,-4.85078 8.85934,-13.36338 12.40754,-18.9169 3.54819,-5.55351 8.22536,-11.17979 10.3937,-12.50283 4.85413,-2.96181 4.9009,-4.30021 0.3584,-10.25573 -4.15664,-5.44964 -4.38068,-8.00623 -1.43361,-16.35913 1.18273,-3.35222 2.15042,-7.47532 2.15042,-9.16245 0,-2.48688 2.91712,-4.46285 15.41135,-10.43917 8.47624,-4.05441 28.79362,-13.88263 45.14974,-21.84049 16.35611,-7.95786 30.42989,-14.46883 31.27506,-14.46883 0.84517,0 6.23757,2.17194 11.98307,4.82655 l 10.4465,4.82654 -1.8027,13.45203 c -2.7601,20.59642 -4.3652,37.20558 -3.6633,37.90752 0.3481,0.34802 5.2178,0.63276 10.8217,0.63276 h 10.1888 l 3.9084,10.50964 c 3.9706,10.67703 4.8111,15.29541 2.7838,15.29541 -0.6185,0 -2.344,2.09666 -3.8345,4.65924 -1.4904,2.56259 -3.1368,4.98181 -3.6585,5.37605 -2.1617,1.63342 -25.7892,36.40545 -25.7892,37.95325 0,0.9258 2.2579,4.8591 5.0176,8.7407 4.5148,6.3501 5.0134,7.9917 4.9754,16.3805 l -0.042,9.3231 -9.6377,10.4933 c -9.43622,10.274 -9.7275,10.458 -13.93548,8.8062 -14.8919,-5.8458 -22.93742,-8.3771 -23.6941,-7.4548 -0.47729,0.5818 -1.65543,4.606 -2.61808,8.9427 -1.62553,7.3229 -2.66261,11.5218 -7.64938,30.97 l -1.87576,7.3155 z"
@@ -718,10 +716,8 @@ d="m 963.38854,234.45791 c -1.57697,-0.97291 -9.47977,-5.83907 -17.56177,-10.813
 id="saojoaquimdabarra"
 class="regiao"
 />
-
-
             
-            </g>
+          </g>
         </svg>
       </div>
     </div>
@@ -736,9 +732,52 @@ class="regiao"
   <script>
     const LINK_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqmzCyl1ScBsPr6d4wtq3tADya58_T9DVkhcUSDgmbwNwyZoc4tPrOMUrt8kB7UJH6tiHr_KVxfS2W/pub?output=csv";
     
+    // OBJETO COMPLETO DE TRADUÇÃO DE NOMES
     const nomesCidades = {
-        "ipiranga": "Ipiranga", "guarulhos": "Guarulhos", "saojose": "São José dos Campos",
-        "campinas": "Campinas", "mogi": "Mogi das Cruzes", "sorocaba": "Sorocaba", "jundiai": "Jundiaí"
+        "juquitiba": "Juquitiba", "saolourenco": "São Lourenço", "embuguacu": "Embuguaçu",
+        "saobernardo": "São Bernardo do Campo", "diadema": "Diadema", "santoandre": "Santo André",
+        "saocaetano": "São Caetano", "maua": "Mauá", "ribeiraopires": "Ribeirão Pires",
+        "riograndedaserra": "Rio Grande da Serra", "suzano": "Suzano", "poa": "Poá",
+        "ferrazdevasconcelos": "Ferraz de Vasconcelos", "mogidascruzes": "Mogi das Cruzes",
+        "biritibamirim": "Biritiba Mirim", "guararema": "Guararema", "salesopolis": "Salesópolis",
+        "santaisabel": "Santa Isabel", "aruja": "Arujá", "guarulhos": "Guarulhos",
+        "mairipora": "Mairiporã", "caieiras": "Caieiras", "franciscomorato": "Francisco Morato",
+        "francodarocha": "Franco da Rocha", "piraporadobomjesus": "Pirapora do Bom Jesus",
+        "cajamar": "Cajamar", "santanadeparnaiba": "Santana de Parnaíba", "barueri": "Barueri",
+        "itapevi": "Itapevi", "jandira": "Jandira", "carapicuiba": "Carapicuíba", "osasco": "Osasco",
+        "vargemgrande": "Vargem Grande Paulista", "cotia": "Cotia", "embudasartes": "Embu das Artes",
+        "taboaodaserra": "Taboão da Serra", "itapecericadaserra": "Itapecerica da Serra",
+        "socorro": "Socorro", "parelheiros": "Parelheiros", "campolimpo": "Campo Limpo",
+        "mboimirim": "M'Boi Mirim", "cidadeademar": "Cidade Ademar", "santoamaro": "Santo Amaro",
+        "ipiranga": "Ipiranga", "jabaquara": "Jabaquara", "pinheiros": "Pinheiros",
+        "vilamariana": "Vila Mariana", "lapa": "Lapa", "butanta": "Butantã", "mooca": "Mooca",
+        "sé": "Sé", "vilaprudente": "Vila Prudente", "aricanduva": "Aricanduva", "saomateus": "São Mateus",
+        "itaquera": "Itaquera", "guaianases": "Guaianases", "cidadetiradentes": "Cidade Tiradentes",
+        "saomiguel": "São Miguel", "itaim": "Itaim", "penha": "Penha", "tremembe": "Tremembé",
+        "ermelimdomatarazzo": "Ermelino Matarazzo", "vilamaria": "Vila Maria", "anhanguera": "Anhanguera",
+        "pirituba": "Pirituba", "casaverde": "Casa Verde", "freguesiadoo": "Freguesia do Ó",
+        "santana": "Santana", "itaquaquecetuba": "Itaquaquecetuba", "miracatu": "Miracatu",
+        "registro": "Registro", "apiai": "Apiaí", "itarare": "Itararé", "itapeva": "Itapeva",
+        "caraguatatuba": "Caraguatatuba", "santos": "Santos", "saovicente": "São Vicente",
+        "guaratinqueta": "Guaratinguetá", "taubate": "Taubaté", "jacarei": "Jacareí",
+        "saojosedoscampos": "São José dos Campos", "grandesaopaulo": "Grande São Paulo",
+        "bragancapaulista": "Bragança Paulista", "pindamonhangaba": "Pindamonhangaba",
+        "sorocaba": "Sorocaba", "jundiai": "Jundiaí", "itu": "Itu", "saoroque": "São Roque",
+        "itapetinga": "Itapetininga", "votorantim": "Votorantim", "capivari": "Capivari",
+        "botucatu": "Botucatu", "piraju": "Piraju", "avare": "Avaré", "assis": "Assis",
+        "ourinhos": "Ourinhos", "presidenteprudente": "Presidente Prudente", "adamantina": "Adamantina",
+        "mirantedoparanapanema": "Mirante do Paranapanema", "santoanastacio": "Santo Anastácio",
+        "jales": "Jales", "andradina": "Andradina", "fernandopolis": "Fernandópolis",
+        "votuporanga": "Votuporanga", "saojosedoriopreto": "São José do Rio Preto",
+        "josebonifacio": "José Bonifácio", "birigui": "Birigui", "aracatuba": "Araçatuba",
+        "lins": "Lins", "penapolis": "Penápolis", "marilia": "Marília", "tupa": "Tupã",
+        "jau": "Jaú", "piracicaba": "Piracicaba", "campinas": "Campinas", "sumare": "Sumaré",
+        "americana": "Americana", "mogimirim": "Mogi Mirim", "limeira": "Limeira",
+        "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "araraquara": "Araraquara",
+        "saojoaodaboavista": "São João da Boa Vista", "ribeiraopreto": "Ribeirão Preto",
+        "jaboticabal": "Jaboticabal", "taquaritinga": "Taquaritinga", "catanduva": "Catanduva",
+        "franca": "Franca", "sertaozinho": "Sertãozinho", "barretos": "Barretos",
+        "saojoaquimdabarra": "São Joaquim da Barra", "bauru": "Bauru"
     };
 
     let dadosGerais = [];
@@ -780,11 +819,13 @@ class="regiao"
         document.querySelectorAll("path").forEach(p => {
             p.onmouseover = function() {
                 if (this.closest(".caixa-minimizada")) return;
-                document.getElementById("nome-regiao").textContent = nomesCidades[this.id] || this.id.toUpperCase();
+                const nomeTraduzido = nomesCidades[this.id] || (this.id.charAt(0).toUpperCase() + this.id.slice(1));
+                document.getElementById("nome-regiao").textContent = nomeTraduzido;
             };
             p.onmouseout = function() {
                 if (pathSelecionado) {
-                    document.getElementById("nome-regiao").textContent = nomesCidades[pathSelecionado.id] || pathSelecionado.id.toUpperCase();
+                    const nomeAtivo = nomesCidades[pathSelecionado.id] || pathSelecionado.id.toUpperCase();
+                    document.getElementById("nome-regiao").textContent = nomeAtivo;
                 } else {
                     document.getElementById("nome-regiao").textContent = "Passe o mouse sobre uma região";
                 }
@@ -796,7 +837,8 @@ class="regiao"
                 if (pathSelecionado) pathSelecionado.classList.remove("ativo");
                 pathSelecionado = this;
                 this.classList.add("ativo");
-                gerarBotoes(this.id, nomesCidades[this.id] || this.id.toUpperCase());
+                const nomeFinal = nomesCidades[this.id] || this.id.toUpperCase();
+                gerarBotoes(this.id, nomeFinal);
             };
         });
     }
@@ -815,6 +857,12 @@ class="regiao"
         const filtrados = dadosGerais.filter(d => d.id === id);
         lista.innerHTML = "";
         document.getElementById("titulo-dinamico").textContent = "Residenciais em " + nome;
+        
+        if(filtrados.length === 0) {
+            lista.innerHTML = "<p style='color:#666'>Nenhum residencial encontrado nesta cidade.</p>";
+            return;
+        }
+
         filtrados.forEach(res => {
             const corEst = (res.est > 0 && res.est <= 5) ? "red" : "black";
             const btn = document.createElement("button");
@@ -838,4 +886,3 @@ class="regiao"
   </script>
 </body>
 </html>
-

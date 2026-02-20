@@ -4,12 +4,13 @@ let dadosGerais = [];
 let pathSelecionado = null;
 
 async function carregarDados() {
+    console.log("Tentando carregar planilha...");
     try {
         const resposta = await fetch(LINK_PLANILHA);
         const texto = await resposta.text();
         const linhas = texto.split(/\r?\n/).filter(l => l.trim() !== "");
         dadosGerais = linhas.slice(1).map(linha => {
-            const col = linha.split(/[,;]/); // Suporta vírgula ou ponto-e-vírgula
+            const col = linha.split(/[,;]/); 
             return {
                 idCidade: col[0]?.toLowerCase().trim(),
                 regiaoNome: col[1]?.trim(),
@@ -21,62 +22,68 @@ async function carregarDados() {
                 valor: col[9]?.trim()
             };
         }).filter(item => item.idCidade);
-    } catch (e) { console.error("Erro planilha:", e); }
+        console.log("Dados carregados com sucesso:", dadosGerais.length, "itens.");
+    } catch (e) { console.error("Erro na planilha:", e); }
 }
 
-function configurarTrocaDeMapas() {
+function iniciarDashboard() {
+    console.log("Iniciando eventos de clique...");
     const container = document.getElementById("mapa-area-container");
-    const titulo = document.getElementById("nome-regiao");
+    const tituloSuperior = document.getElementById("nome-regiao");
 
+    // 1. EVENTO DE TROCA DE MAPAS (CLIQUE NA CAIXA)
     document.querySelectorAll(".caixa-mapa").forEach(caixa => {
-        caixa.onclick = (e) => {
-            // Só troca se clicar na caixa que está pequena
-            if (caixa.classList.contains("caixa-minimizada")) {
+        caixa.style.cursor = "pointer"; // Garante que o mouse mostre que é clicável
+        caixa.onclick = function() {
+            if (this.classList.contains("caixa-minimizada")) {
+                console.log("Trocando mapas...");
                 const maximizadaAtual = document.querySelector(".caixa-maximizada");
-
-                // Troca as classes
-                caixa.classList.replace("caixa-minimizada", "caixa-maximizada");
+                
+                this.classList.replace("caixa-minimizada", "caixa-maximizada");
                 maximizadaAtual.classList.replace("caixa-maximizada", "caixa-minimizada");
 
-                // Move FISICAMENTE no HTML
-                // 1. Garante o título no topo
-                container.appendChild(titulo);
-                // 2. Coloca a caixa clicada (agora grande) logo abaixo do título
-                container.insertBefore(caixa, maximizadaAtual);
+                // Reordena no HTML
+                container.insertBefore(this, maximizadaAtual);
+                container.insertBefore(tituloSuperior, this);
                 
-                // Limpa seleções anteriores
                 limparSelecao();
             }
+        };
+    });
+
+    // 2. EVENTO DE CLIQUE NOS MUNICÍPIOS (PATHS)
+    document.querySelectorAll("path").forEach(path => {
+        path.onclick = function(e) {
+            // Se o mapa estiver pequeno, não faz nada com o path
+            if (this.closest(".caixa-minimizada")) return;
+            
+            // Só age se tiver a classe com-mrv
+            if (!this.classList.contains("com-mrv")) {
+                console.log("Clique em região sem MRV:", this.id);
+                return;
+            }
+
+            e.stopPropagation(); // Impede de disparar o clique na caixa pai
+            console.log("Cidade selecionada:", this.id);
+
+            if (pathSelecionado) pathSelecionado.classList.remove("ativo");
+            pathSelecionado = this;
+            this.classList.add("ativo");
+            
+            // Atualiza o texto do mouse (opcional)
+            tituloSuperior.textContent = (this.id).toUpperCase();
+            
+            gerarBotoes(this.id);
         };
     });
 }
 
 function limparSelecao() {
-    document.querySelectorAll("path").forEach(p => {
-        p.classList.remove("ativo");
-    });
+    document.querySelectorAll("path").forEach(p => p.classList.remove("ativo"));
     document.getElementById("btRes-container").innerHTML = "";
     document.getElementById("titulo-dinamico").textContent = "";
     document.getElementById("residencial-info").innerHTML = "";
     pathSelecionado = null;
-}
-
-function configurarCliquesNosCaminhos() {
-    document.querySelectorAll("path").forEach(path => {
-        path.onclick = (e) => {
-            // Se o mapa estiver minimizado, não deixa clicar nos residenciais
-            if (path.closest(".caixa-minimizada")) return;
-            if (!path.classList.contains("com-mrv")) return;
-            
-            e.stopPropagation(); // Impede que o clique no path dispare o clique na caixa
-
-            if (pathSelecionado) pathSelecionado.classList.remove("ativo");
-            pathSelecionado = path;
-            path.classList.add("ativo");
-
-            gerarBotoes(path.id);
-        };
-    });
 }
 
 function gerarBotoes(pathId) {
@@ -86,20 +93,24 @@ function gerarBotoes(pathId) {
     container.innerHTML = "";
     document.getElementById("titulo-dinamico").textContent = `MRV em ${pathId.toUpperCase()}`;
 
+    if(filtrados.length === 0) {
+        container.innerHTML = "<p>Nenhum dado encontrado para esta ID no CSV.</p>";
+        return;
+    }
+
     filtrados.forEach(res => {
         const btn = document.createElement("button");
         btn.className = "btRes";
+        let estNum = parseInt(res.estoque) || 0;
+        let corEst = estNum <= 5 ? "red" : "black";
         
-        let est = parseInt(res.estoque) || 0;
-        let corEstoque = est <= 5 ? "red" : "black";
-        
-        btn.innerHTML = `<strong>${res.btNome}</strong> - <span style="color:${corEstoque}">${est} un.</span>`;
+        btn.innerHTML = `<strong>${res.btNome}</strong> - <span style="color:${corEst}">${res.estoque} un.</span>`;
         
         btn.onclick = () => {
             document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
             btn.classList.add("btRes-ativo");
             document.getElementById("residencial-info").innerHTML = `
-                <h3>${res.btNome}</h3>
+                <h3 style="color:rgb(6,94,3)">${res.btNome}</h3>
                 <p>📍 ${res.endereco} - ${res.bairro}</p>
                 <p>💰 Valor: ${res.valor}</p>
                 <p>🔑 Entrega: ${res.previsao}</p>
@@ -109,8 +120,8 @@ function gerarBotoes(pathId) {
     });
 }
 
+// EXECUÇÃO INICIAL
 window.onload = async () => {
     await carregarDados();
-    configurarTrocaDeMapas();
-    configurarCliquesNosCaminhos();
+    iniciarDashboard();
 };

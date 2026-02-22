@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -46,6 +47,9 @@
     .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
     .com-mrv:hover { fill: rgb(255, 153, 0) !important; stroke: #000; }
     .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.2px !important; }
+
+    /* Cursor de clique para o atalho da Grande SP */
+    #grandesaopaulo { cursor: pointer; }
 
     /* --- INFO E BOTÕES --- */
     .btRes { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 6px; cursor: pointer; text-align: left; background: #fafafa; font-size: 14px; margin-bottom: 5px; transition: 0.2s; }
@@ -423,7 +427,7 @@ class="regiao"
 d="m 658.02878,387.7869 c -0.78849,-0.27286 -5.73906,-0.91314 -11.00128,-1.42285 l -9.56767,-0.92673 5.62523,-5.08206 c 3.09388,-2.79513 5.61448,-6.13596 5.60133,-7.42406 -0.0131,-1.2881 -2.92743,-7.16979 -6.4762,-13.07041 -3.81477,-6.3429 -6.08156,-11.61713 -5.54533,-12.90252 4.21074,-10.09361 4.33526,-21.19849 0.36939,-32.94209 -2.60534,-7.71481 -2.81579,-9.81874 -1.37947,-13.7908 0.93218,-2.57792 1.26978,-6.38086 0.75022,-8.45098 l -0.94467,-3.76384 9.13381,0.43132 c 8.8936,0.41998 9.14626,0.54049 9.60756,4.58239 0.29288,2.5662 -0.66499,5.69131 -2.50883,8.18523 -3.66288,4.95432 -3.73251,7.89657 -0.36489,15.41841 4.51108,10.07582 7.85181,11.66967 24.45968,11.66967 16.6677,0 24.18708,2.2929 29.41154,8.96852 l 3.39301,4.33547 -7.36154,7.50437 c -6.46104,6.58639 -8.22772,7.59624 -14.44243,8.25542 -7.93831,0.842 -10.31245,3.06596 -11.70874,10.96808 -0.49826,2.81984 -2.82405,7.15461 -5.16842,9.63282 -3.6277,3.8348 -4.02175,4.9557 -2.64591,7.52647 1.49528,2.79395 1.26315,3.01214 -3.09309,2.90746 -2.59033,-0.0623 -5.35481,-0.33643 -6.1433,-0.60929 z"
 id="santana"
 class="regiao"
-/>  
+/> 
             
             </g>
         </svg>
@@ -762,7 +766,6 @@ class="regiao"
     let dadosGerais = [];
     let pathSelecionado = null;
 
-    // DICIONÁRIO COMPLETO ATUALIZADO
     const NOMES_REAIS = {
         "juquitiba": "Juquitiba", "saolourenco": "São Lourenço", "embuguacu": "Embuguaçu", "saobernardo": "São Bernardo do Campo",
         "diadema": "Diadema", "santoandre": "Santo André", "saocaetano": "São Caetano", "maua": "Mauá", "ribeiraopires": "Ribeirão Pires",
@@ -787,7 +790,7 @@ class="regiao"
         "votorantim": "Votorantim", "capivari": "Capivari", "botucatu": "Botucatu", "piraju": "Piraju", "avare": "Avaré", "assis": "Assis",
         "ourinhos": "Ourinhos", "presidenteprudente": "Presidente Prudente", "mirantedoparanapanema": "Mirante do Paranapanema",
         "adamantina": "Adamantina", "santoanastacio": "Santo Anastácio", "jales": "Jales", "andradina": "Andradina",
-        "fernandopolis": "Fernandópolis", "votuporanga": "Votuporanga", "saojosedoriopreto": "São José do Rio Preto", "josebonifacio": "José Bonifácio",
+        "fernandopolis": "Fernandópolis", "votuporanga": "Votuporanga", "saojosedoriopreto": "São José do Rio Preto", "josebonifacio": "José Bonifacio",
         "birigui": "Birigui", "aracatuba": "Araçatuba", "lins": "Lins", "penapolis": "Penápolis", "marilia": "Marília", "tupa": "Tupã",
         "jau": "Jaú", "piracicaba": "Piracicaba", "campinas": "Campinas", "sumare": "Sumaré", "americana": "Americana", "mogimirim": "Mogi Mirim",
         "limeira": "Limeira", "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "saojoaodaboavista": "São João da Boa Vista",
@@ -929,7 +932,20 @@ class="regiao"
             };
 
             p.onclick = (e) => {
+                // Se a caixa estiver minimizada, não fazemos nada (o clique na caixa já troca o mapa)
                 if (p.closest(".caixa-minimizada")) return;
+
+                // ATALHO GRANDE SP: Se clicar no path específico dentro do mapa do estado
+                if (p.id === "grandesaopaulo") {
+                    e.stopPropagation();
+                    // Localiza a caixa da Grande SP (que deve estar minimizada embaixo)
+                    const caixaGSP = document.getElementById("container-gsp");
+                    if (caixaGSP.classList.contains("caixa-minimizada")) {
+                        trocarMapas(caixaGSP); // Força a troca para o mapa da Grande SP subir
+                    }
+                    return;
+                }
+
                 if (!p.classList.contains("com-mrv")) return;
                 e.stopPropagation();
 

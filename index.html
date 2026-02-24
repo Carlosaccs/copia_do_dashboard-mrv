@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,50 +7,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard MRV SP</title>
     <style>
-        /* --- ESTILOS --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* --- ESTILOS GERAIS --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; }
-        @media (min-width: 900px) { body { overflow: hidden; } }
         
-        h1 { background: rgb(6, 94, 3); color: white; text-align: center; padding: 15px; font-size: 20px; height: 55px; }
+        h1 { background: rgb(6, 94, 3); color: white; text-align: center; padding: 15px; font-size: 18px; height: 55px; }
         
-        .container { display: flex; flex-direction: column; padding: 15px; gap: 20px; height: calc(100% - 55px); }
+        /* Layout Mobile First */
+        .container { display: flex; flex-direction: column; padding: 10px; gap: 15px; }
+        
+        .mapa-area { width: 100%; display: flex; flex-direction: column; order: 1; }
+        .info { width: 100%; order: 2; padding-top: 10px; }
+
+        /* Ajustes para Desktop */
         @media (min-width: 900px) {
-            .container { flex-direction: row; gap: 30px; }
-            .mapa-area { flex: 1; height: 100%; order: 1; display: flex; flex-direction: column; }
+            body { overflow: hidden; }
+            .container { flex-direction: row; gap: 30px; height: calc(100% - 55px); padding: 15px; }
+            .mapa-area { flex: 1; height: 100%; order: 1; }
             .info { flex: 0 0 550px; height: 100%; overflow-y: auto; padding-left: 10px; border-left: 1px solid #f0f0f0; order: 2; }
+            h1 { font-size: 20px; }
         }
 
-        .titulo-mapa { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; margin-bottom: 5px; }
+        .titulo-mapa { min-height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; margin-bottom: 5px; text-align: center; }
         
-        /* Remoção de transições para troca instantânea */
-        .caixa-mapa { background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 8px; position: relative; }
-        .caixa-maximizada { flex: 1; min-height: 350px; z-index: 1; }
+        .caixa-mapa { background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 5px; border-radius: 8px; position: relative; width: 100%; }
+        .caixa-maximizada { flex: 1; min-height: 300px; z-index: 1; }
         
-        .caixa-minimizada { height: 130px; cursor: pointer; opacity: 0.35; filter: grayscale(1); overflow: hidden; z-index: 10; border: none !important; background: transparent !important; }
-        .caixa-minimizada:hover { opacity: 0.8; filter: grayscale(0.5); }
+        .caixa-minimizada { height: 100px; cursor: pointer; opacity: 0.4; filter: grayscale(1); overflow: hidden; z-index: 10; background: #f9f9f9 !important; border: 1px solid #ddd !important; margin-top: 10px; }
         
-        svg { width: 100%; height: 100%; display: block; }
-        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; cursor: default; }
-        path:hover { fill: #555555 !important; stroke: #000; }
+        svg { width: 100%; height: 100%; max-height: 60vh; display: block; }
+        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; }
         
         .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
-        .com-mrv:hover { fill: rgb(255, 153, 0) !important; stroke: #000; }
         .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.5px !important; }
 
         /* --- INTERFACE DE INFO --- */
-        #titulo-dinamico { margin-bottom: 15px; color: rgb(6, 94, 3); font-size: 22px; }
-        .btRes { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 6px; cursor: pointer; text-align: left; background: #fafafa; margin-bottom: 5px; }
+        #titulo-dinamico { margin-bottom: 12px; color: rgb(6, 94, 3); font-size: 20px; }
+        .btRes { width: 100%; padding: 15px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; text-align: left; background: #fafafa; margin-bottom: 8px; font-size: 14px; }
         .btRes-ativo { border-color: rgb(255, 153, 0); background: #fff !important; font-weight: bold; border-width: 2px; }
         
         #dica-corretor-box { background: #f0fdf4; border-radius: 8px; padding: 12px; margin-top: 10px; border-left: 5px solid rgb(6, 94, 3); display: none; font-size: 14px; margin-bottom: 15px; }
-        #residencial-info { margin-top: 15px; padding: 20px; background: #fffcf5; border: 1px solid #ffeeba; border-left: 5px solid rgb(255, 153, 0); border-radius: 8px; display: none; margin-bottom: 30px; }
+        #residencial-info { margin-top: 15px; padding: 15px; background: #fffcf5; border: 1px solid #ffeeba; border-left: 5px solid rgb(255, 153, 0); border-radius: 8px; display: none; margin-bottom: 30px; }
         
-        .grid-tecnico { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .label { font-weight: bold; color: #333; }
+        .grid-tecnico { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .label { font-weight: bold; color: #333; font-size: 13px; }
         .detalhes-texto p { margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
         
-        .btn-acao { display: block; width: 100%; margin-top: 8px; padding: 12px; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; text-decoration: none; }
+        .btn-acao { display: block; width: 100%; margin-top: 10px; padding: 15px; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; text-decoration: none; }
         .btn-book { background: #16a34a; } .btn-video { background: #2563eb; }
     </style>
 </head>
@@ -58,15 +62,8 @@
     <h1>Residenciais MRV em SP</h1>
 
     <div class="container">
-        <div class="info" id="painel-info">
-            <h2 id="titulo-dinamico"></h2>
-            <div id="btRes-container"></div>
-            <div id="dica-corretor-box"></div>
-            <div id="residencial-info"></div>
-        </div>
-
         <div class="mapa-area" id="mapa-area-container">
-            <div id="nome-regiao" class="titulo-mapa">Selecione uma região</div>
+            <div id="nome-regiao" class="titulo-mapa">Toque em uma região</div>
             
             <div id="container-gsp" class="caixa-mapa caixa-maximizada" onclick="trocarMapas(this)">
                 <svg viewBox="80 -10 490 310" preserveAspectRatio="xMidYMid meet">
@@ -742,6 +739,13 @@ class="regiao"
                 </svg>
             </div>
         </div>
+
+        <div class="info" id="painel-info">
+            <h2 id="titulo-dinamico"></h2>
+            <div id="btRes-container"></div>
+            <div id="dica-corretor-box"></div>
+            <div id="residencial-info"></div>
+        </div>
     </div>
 
     <script>
@@ -790,7 +794,7 @@ class="regiao"
             "lins": "Lins", "penapolis": "Penapolis", "marilia": "Marilia", "tupa": "Tupã",
             "jau": "Jau", "piracicaba": "Piracicaba", "campinas": "Campinas", "sumare": "Sumare",
             "americana": "Americana", "mogimirim": "Mogi Mirim", "limeira": "Limeira",
-            "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "saojoaodaboavista": "São João da Boa Vista",
+            "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "saojojoaodaboavista": "São João da Boa Vista",
             "ribeiraopreto": "Ribeirao Preto", "araraquara": "Araraquara", "jaboticabal": "Jaboticabal",
             "taquaritinga": "Taquaritinga", "catanduva": "Catanduva", "franca": "Franca",
             "sertaozinho": "Sertãozinho", "saojoaquimdabarra": "São Joaquim da Barra", "barretos": "Barretos",
@@ -798,7 +802,7 @@ class="regiao"
         };
 
         function obterNomeFormatado(idPath) {
-            if (!idPath) return "Selecione uma região";
+            if (!idPath) return "Toque em uma região";
             const idLimpo = idPath.toLowerCase().trim();
             return DICIONARIO_NOMES[idLimpo] || idLimpo.toUpperCase();
         }
@@ -869,6 +873,11 @@ class="regiao"
                 };
                 container.appendChild(btn);
             });
+
+            // No celular, foca na lista de botões após selecionar o bairro
+            if(window.innerWidth < 900) {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function abrirFicha(res) {
@@ -881,7 +890,6 @@ class="regiao"
                 dicaBox.style.display = "block";
             } else { dicaBox.style.display = "none"; }
 
-            // Restauração de todos os campos técnicos
             infoBox.innerHTML = `
                 <h3 style="color:rgb(6,94,3); margin-bottom:10px;">${res.nome}</h3>
                 <p style="margin-bottom:10px;">📍 ${res.endereco}</p>
@@ -902,6 +910,11 @@ class="regiao"
                     ${res.book ? `<button class="btn-acao btn-book" onclick="copiarLink('${res.book}', this)">📋 Link do Book PDF</button>` : ''}
                     ${res.video1 ? `<button class="btn-acao btn-video" onclick="copiarLink('${res.video1}', this)">🎥 Vídeo Decorado</button>` : ''}
                 </div>`;
+            
+            // Scroll até a ficha no celular
+            if(window.innerWidth < 900) {
+                infoBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         function copiarLink(url, btn) {
@@ -914,15 +927,8 @@ class="regiao"
         function configurarEventos() {
             const display = document.getElementById("nome-regiao");
             document.querySelectorAll("path").forEach(p => {
-                p.onmouseenter = () => {
-                    if (p.closest(".caixa-minimizada")) return;
-                    display.textContent = obterNomeFormatado(p.id);
-                };
-                p.onmouseleave = () => {
-                    if (p.closest(".caixa-minimizada")) return;
-                    display.textContent = pathSelecionado ? obterNomeFormatado(pathSelecionado.id) : "Selecione uma região";
-                };
                 p.onclick = (e) => {
+                    // Impede clique nos paths se o container estiver minimizado
                     if (p.closest(".caixa-minimizada")) return;
 
                     if (p.id === "grandesaopaulo") {
@@ -931,8 +937,13 @@ class="regiao"
                         return;
                     }
 
-                    if (!p.classList.contains("com-mrv")) return;
+                    if (!p.classList.contains("com-mrv")) {
+                        display.textContent = obterNomeFormatado(p.id);
+                        return;
+                    }
+
                     e.stopPropagation();
+                    display.textContent = obterNomeFormatado(p.id);
                     
                     if (pathSelecionado === p) {
                         p.classList.remove("ativo");
@@ -943,6 +954,13 @@ class="regiao"
                         pathSelecionado = p;
                         p.classList.add("ativo");
                         gerarBotoes(p.id);
+                    }
+                };
+                
+                // Mouseenter apenas para Desktop
+                p.onmouseenter = () => {
+                    if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
+                        display.textContent = obterNomeFormatado(p.id);
                     }
                 };
             });
@@ -960,8 +978,9 @@ class="regiao"
             
             pathSelecionado = null;
             document.querySelectorAll("path").forEach(path => path.classList.remove("ativo"));
-            document.getElementById("nome-regiao").textContent = "Selecione uma região";
+            document.getElementById("nome-regiao").textContent = "Toque em uma região";
             resetInterface(); 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         window.onload = async () => { await carregarDados(); configurarEventos(); };

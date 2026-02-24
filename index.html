@@ -2,85 +2,75 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard MRV SP - Modo Raciocínio</title>
-  <style>
-    /* --- ESTRUTURA --- */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; }
-    @media (min-width: 900px) { body { overflow: hidden; } }
-    
-    h1 { background: rgb(6, 94, 3); color: white; text-align: center; padding: 15px; font-size: 20px; height: 55px; }
-    
-    .container { display: flex; flex-direction: column; padding: 15px; gap: 20px; }
-    @media (min-width: 900px) {
-        .container { flex-direction: row; height: calc(100% - 55px); gap: 30px; }
-        .mapa-area { flex: 1; height: 100%; }
-        .info { flex: 0 0 550px; height: 100%; overflow-y: auto; padding-left: 10px; border-left: 1px solid #f0f0f0; }
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard MRV SP</title>
+    <style>
+        /* --- ESTILOS --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; }
+        @media (min-width: 900px) { body { overflow: hidden; } }
+        
+        h1 { background: rgb(6, 94, 3); color: white; text-align: center; padding: 15px; font-size: 20px; height: 55px; }
+        
+        .container { display: flex; flex-direction: column; padding: 15px; gap: 20px; height: calc(100% - 55px); }
+        @media (min-width: 900px) {
+            .container { flex-direction: row; gap: 30px; }
+            .mapa-area { flex: 1; height: 100%; order: 1; display: flex; flex-direction: column; }
+            .info { flex: 0 0 550px; height: 100%; overflow-y: auto; padding-left: 10px; border-left: 1px solid #f0f0f0; order: 2; }
+        }
 
-    /* --- MAPA E INTERAÇÕES --- */
-    .mapa-area { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-    .titulo-mapa { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; }
-    
-    .caixa-mapa { background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 5px; overflow: hidden; border-radius: 8px; }
-    .caixa-maximizada { flex: 1; min-height: 320px; }
-    .caixa-minimizada { height: 120px; cursor: pointer; opacity: 0.35; filter: grayscale(1); }
-    .caixa-minimizada:hover { opacity: 0.8; }
-    
-    svg { width: 100%; height: 100%; display: block; max-height: 65vh; }
-    path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: all 0.2s; cursor: default; }
-    path:hover { fill: #555555 !important; stroke: #000; stroke-width: 0.8px; }
-    
-    .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
-    .com-mrv:hover { fill: rgb(255, 153, 0) !important; stroke: #000; }
-    .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.2px !important; }
+        .titulo-mapa { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; margin-bottom: 5px; }
+        
+        /* Remoção de transições para troca instantânea */
+        .caixa-mapa { background: #ffffff; display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 8px; position: relative; }
+        .caixa-maximizada { flex: 1; min-height: 350px; z-index: 1; }
+        
+        .caixa-minimizada { height: 130px; cursor: pointer; opacity: 0.35; filter: grayscale(1); overflow: hidden; z-index: 10; border: none !important; background: transparent !important; }
+        .caixa-minimizada:hover { opacity: 0.8; filter: grayscale(0.5); }
+        
+        svg { width: 100%; height: 100%; display: block; }
+        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; cursor: default; }
+        path:hover { fill: #555555 !important; stroke: #000; }
+        
+        .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
+        .com-mrv:hover { fill: rgb(255, 153, 0) !important; stroke: #000; }
+        .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.5px !important; }
 
-    /* --- COMPONENTES DA LISTA --- */
-    #titulo-dinamico { margin-bottom: 15px; color: rgb(6, 94, 3); font-size: 22px; } /* REMOVIDO UPPERCASE AQUI */
-
-    .btRes { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 6px; cursor: pointer; text-align: left; background: #fafafa; font-size: 14px; margin-bottom: 5px; transition: 0.2s; }
-    .btRes:hover { background: #f0f0f0; }
-    .btRes-ativo { border-color: rgb(255, 153, 0); background: #fff !important; font-weight: bold; border-width: 2px; }
-
-    .estoque-alerta { color: #e11d48; font-weight: bold; }
-    .vendido { text-decoration: line-through; opacity: 0.5; color: #666; }
-
-    #dica-corretor-box {
-        background: #f0fdf4; border-radius: 8px; padding: 12px; margin-top: 10px;
-        border: 1px solid #bbf7d0; border-left: 5px solid rgb(6, 94, 3); 
-        display: none; font-size: 0.95em; color: #166534; line-height: 1.5;
-    }
-
-    /* --- FICHA TÉCNICA --- */
-    #residencial-info { margin-top: 15px; padding: 20px; background: #fffcf5; border: 1px solid #ffeeba; border-left: 5px solid rgb(255, 153, 0); border-radius: 8px; display: none; margin-bottom: 40px; }
-    .grid-tecnico { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .detalhes-texto { border-top: 1px solid #eee; padding-top: 15px; font-size: 0.95em; line-height: 1.6; }
-    .label { font-weight: bold; color: #000; }
-
-    /* --- BOTÕES DE CÓPIA --- */
-    .btn-acao { 
-        display: block; width: 100%; margin-top: 8px; padding: 12px; 
-        color: white; border: none; border-radius: 6px; 
-        font-weight: bold; text-align: center; cursor: pointer; font-size: 13px; transition: 0.2s;
-    }
-    .btn-book { background: #16a34a; } 
-    .btn-video { background: #2563eb; }
-    .btn-acao:hover { opacity: 0.9; transform: scale(1.01); }
-  </style>
+        /* --- INTERFACE DE INFO --- */
+        #titulo-dinamico { margin-bottom: 15px; color: rgb(6, 94, 3); font-size: 22px; }
+        .btRes { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 6px; cursor: pointer; text-align: left; background: #fafafa; margin-bottom: 5px; }
+        .btRes-ativo { border-color: rgb(255, 153, 0); background: #fff !important; font-weight: bold; border-width: 2px; }
+        
+        #dica-corretor-box { background: #f0fdf4; border-radius: 8px; padding: 12px; margin-top: 10px; border-left: 5px solid rgb(6, 94, 3); display: none; font-size: 14px; margin-bottom: 15px; }
+        #residencial-info { margin-top: 15px; padding: 20px; background: #fffcf5; border: 1px solid #ffeeba; border-left: 5px solid rgb(255, 153, 0); border-radius: 8px; display: none; margin-bottom: 30px; }
+        
+        .grid-tecnico { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .label { font-weight: bold; color: #333; }
+        .detalhes-texto p { margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
+        
+        .btn-acao { display: block; width: 100%; margin-top: 8px; padding: 12px; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; text-decoration: none; }
+        .btn-book { background: #16a34a; } .btn-video { background: #2563eb; }
+    </style>
 </head>
 <body>
 
-  <h1>Residenciais MRV em SP</h1>
+    <h1>Residenciais MRV em SP</h1>
 
-  <div class="container">
-    <div class="mapa-area" id="mapa-area-container">
-      <div id="nome-regiao" class="titulo-mapa">Selecione uma região</div>
-      
-      <div id="container-gsp" class="caixa-mapa caixa-maximizada" onclick="trocarMapas(this)">
-        <svg viewBox="80 -10 490 310" preserveAspectRatio="xMidYMid meet">
-          <g transform="translate(110.74, 10) scale(0.2645)">
+    <div class="container">
+        <div class="info" id="painel-info">
+            <h2 id="titulo-dinamico"></h2>
+            <div id="btRes-container"></div>
+            <div id="dica-corretor-box"></div>
+            <div id="residencial-info"></div>
+        </div>
+
+        <div class="mapa-area" id="mapa-area-container">
+            <div id="nome-regiao" class="titulo-mapa">Selecione uma região</div>
+            
+            <div id="container-gsp" class="caixa-mapa caixa-maximizada" onclick="trocarMapas(this)">
+                <svg viewBox="80 -10 490 310" preserveAspectRatio="xMidYMid meet">
+                    <g transform="translate(110.74, 10) scale(0.2645)">
 <path
 d="m 264.68517,1004.1541 c -2.66972,-3.394 -3.30162,-3.4932 -22.61075,-3.5483 l -19.86427,-0.057 -17.92017,-24.21796 c -9.85609,-13.31987 -19.09402,-24.6418 -20.52872,-25.15984 -1.87337,-0.67645 -4.99504,1.1338 -11.07633,6.42316 -7.13738,6.20789 -8.90883,7.12901 -11.27494,5.86271 -1.54393,-0.82629 -3.95698,-1.50234 -5.36231,-1.50234 -1.40533,0 -5.31849,-1.05534 -8.69592,-2.34519 -5.51733,-2.10709 -6.14079,-2.82543 -6.14079,-7.07528 0,-4.10446 -0.66365,-4.97006 -5.01765,-6.54449 -4.35387,-1.57438 -5.01765,-2.44008 -5.01765,-6.54406 v -4.72965 h -12.90252 -12.90253 v 5.03573 c 0,4.75085 -0.46633,5.24254 -8.243278,8.69147 -9.249406,4.10194 -9.315051,4.09674 -26.163454,-2.07861 -11.258203,-4.1264 -13.576992,-4.4669 -30.464295,-4.47343 l -18.278578,-0.007 v -4.30084 c 0,-3.9595 0.398227,-4.30084 5.017649,-4.30084 3.054973,0 5.020145,-0.70095 5.024031,-1.79202 0.0035,-0.98561 -2.415714,-7.75042 -5.376052,-15.03292 -5.230097,-12.86615 -5.514304,-13.24147 -10.04168,-13.26092 -4.216746,-0.0181 -4.659245,-0.4285 -4.659245,-4.32087 0,-4.20527 0.159291,-4.30085 7.16807,-4.30085 3.942438,0 7.168069,-0.3639 7.168069,-0.80866 0,-0.44477 -1.612815,-4.33465 -3.584035,-8.64417 -4.968598,-10.86247 -4.756452,-12.05137 2.150421,-12.05137 5.082256,0 5.734456,-0.38766 5.734456,-3.4085 0,-1.87467 -0.954133,-4.20036 -2.120296,-5.16819 -3.034551,-2.51845 -0.210865,-7.7347 3.255699,-6.01431 1.346747,0.66836 6.319389,2.02428 11.050315,3.01315 4.730926,0.98887 11.109913,2.69124 14.175526,3.78304 3.065612,1.09179 6.129962,1.64138 6.809666,1.2213 0.679703,-0.42008 1.235824,-3.34962 1.235824,-6.51009 0,-5.28704 0.902256,-6.6266 11.288948,-16.76036 10.062996,-9.81794 11.484491,-11.87032 13.089561,-18.89892 0.990338,-4.33668 2.610709,-10.78794 3.600823,-14.33614 0.990115,-3.54819 2.603894,-10.32202 3.586175,-15.05294 1.946539,-9.37505 15.13579,-33.62483 18.31063,-33.66596 1.01753,-0.0132 3.7595,1.38774 6.09326,3.11316 4.1731,3.08531 4.59234,3.10967 25.37786,1.47461 17.07967,-1.34355 21.48175,-2.13721 22.94371,-4.13655 1.69876,-2.3232 2.2043,-2.282 8.29237,0.67581 3.56582,1.73242 6.72759,3.14984 7.02614,3.14984 0.29855,0 3.2624,-2.27215 6.58635,-5.04923 6.27503,-5.24263 6.39861,-5.24232 12.30993,0.0316 14.25443,12.71737 22.24617,19.71245 26.35984,23.07247 14.9204,12.1869 18.83449,17.02597 21.41134,26.47129 2.43151,8.9126 2.69092,9.24927 7.44373,9.66066 3.74954,0.32455 5.73295,-0.43441 8.31344,-3.18122 l 3.38903,-3.60746 5.3848,4.26484 c 2.96164,2.34566 8.25578,7.00284 11.76476,10.34928 5.57041,5.31239 6.49175,7.05971 7.26087,13.77018 0.60516,5.27984 2.13027,9.29185 4.87202,12.81653 2.19512,2.82194 4.38382,5.70521 4.86378,6.40727 0.47996,0.70206 8.08872,1.89655 16.90839,2.65442 18.33872,1.57584 22.45416,2.77251 23.7677,6.91109 1.30946,4.12577 6.97586,3.62876 15.79581,-1.38549 6.90055,-3.92304 19.18677,-10.0013 20.21602,-10.0013 0.27377,0 1.49857,1.93538 2.72181,4.30084 l 2.22405,4.30084 h 19.23236 c 10.5778,0 19.60583,-0.60427 20.06228,-1.34283 0.45646,-0.73856 2.59118,-2.24925 4.74385,-3.35709 2.15268,-1.10785 9.34337,-5.3424 15.97934,-9.41013 6.63598,-4.06772 12.30032,-7.16094 12.58744,-6.87381 0.28713,0.28712 1.10943,3.99698 1.82736,8.24413 0.71791,4.24714 1.72415,9.70573 2.23608,12.1302 l 0.93076,4.40812 -12.67309,2.51323 c -6.97022,1.38228 -14.4472,2.8368 -16.61554,3.23227 -4.71414,0.85977 -4.67965,0.59401 -1.01067,7.78579 l 2.93177,5.74674 -6.41107,-0.33186 c -3.86346,-0.19999 -7.4422,0.48454 -9.00593,1.72261 -4.13833,3.27653 -4.90878,3.83766 -16.6732,12.14336 -7.92852,5.59756 -13.96586,8.61787 -20.78741,10.39941 l -9.61368,2.51073 -0.44826,6.21435 c -0.65945,9.14195 4.99856,17.37909 11.93751,17.37909 h 4.99731 v 11.46891 11.46891 h -9.91837 -9.91838 l -3.28889,5.37605 c -1.80891,2.95683 -3.95818,6.06773 -4.77617,6.91311 -0.81801,0.84537 -3.10009,3.91005 -5.07131,6.81041 -2.37937,3.50088 -4.30684,4.97991 -5.73446,4.40033 -8.07759,-3.27935 -12.03653,-3.57367 -18.70981,-1.39096 -9.82852,3.21475 -10.56709,2.99784 -14.26331,-4.18876 -1.8249,-3.5482 -3.9282,-6.45127 -4.67399,-6.45127 -0.7458,0 -4.5849,2.90307 -8.53134,6.45127 -6.78921,6.10408 -7.62992,6.45126 -15.62199,6.45126 h -8.44664 v 6.97692 6.97689 l -7.13674,2.9659 -7.13676,2.9659 z"
 id="juquitiba"
@@ -426,8 +416,7 @@ d="m 658.02878,387.7869 c -0.78849,-0.27286 -5.73906,-0.91314 -11.00128,-1.42285
 id="santana"
 class="regiao"
 /> 
-            
-            </g>
+          </g>
         </svg>
       </div>
 
@@ -749,228 +738,233 @@ d="m 963.38854,234.45791 c -1.57697,-0.97291 -9.47977,-5.83907 -17.56177,-10.813
 id="saojoaquimdabarra"
 class="regiao"
 />
-             </g>
-        </svg>
-      </div>
+                        </g>
+                </svg>
+            </div>
+        </div>
     </div>
 
-    <div class="info" id="painel-info">
-      <h2 id="titulo-dinamico"></h2>
-      <div id="btRes-container"></div>
-      <div id="dica-corretor-box"></div>
-      <div id="residencial-info"></div>
-    </div>
-  </div>
+    <script>
+        const LINK_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqmzCyl1ScBsPr6d4wtq3tADya58_T9DVkhcUSDgmbwNwyZoc4tPrOMUrt8kB7UJH6tiHr_KVxfS2W/pub?output=csv";
+        const BASE_URL_GITHUB = "https://carlosaccs.github.io/copia_do_dashboard-mrv_23_02/";
+        
+        let dadosGerais = [];
+        let pathSelecionado = null;
 
-  <script>
-    const LINK_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqmzCyl1ScBsPr6d4wtq3tADya58_T9DVkhcUSDgmbwNwyZoc4tPrOMUrt8kB7UJH6tiHr_KVxfS2W/pub?output=csv";
-    const BASE_URL_GITHUB = "https://carlosaccs.github.io/copia_do_dashboard-mrv_23_02/";
-    
-    let dadosGerais = [];
-    let pathSelecionado = null;
+        const DICIONARIO_NOMES = {
+            "juquitiba": "Juquitiba", "saolourenco": "São Lourenço", "embuguacu": "Embuguaçu",
+            "saobernardo": "São Bernardo do Campo", "diadema": "Diadema", "santoandre": "Santo Andre",
+            "saocaetano": "São Caetãno", "maua": "Mauá", "ribeiraopires": "Ribeirao Pires",
+            "riograndedaserra": "Rio Grande da Serra", "suzano": "Suzano", "ferrazdevasconcelos": "Ferraz de Vasconcelos",
+            "poa": "Poa", "mogidascruzes": "Mogi das Cruzes", "biritibamirim": "Biritiba Mirim",
+            "guararema": "Guararema", "salesopolis": "Salesopolis", "santaisabel": "Santa Isabel",
+            "aruja": "Aruja", "guarulhos": "Guarulhos", "mairipora": "Mairipora",
+            "caieiras": "Caieiras", "franciscomorato": "Francisco Morato", "francodarocha": "Franco da Rocha",
+            "piraporadobomjesus": "Pirapora do Bom Jesus", "cajamar": "Cajamar", "santanadeparnaiba": "Santana de Parnaiba",
+            "barueri": "Barueri", "itapevi": "Itapevi", "jandira": "Jandira",
+            "carapicuiba": "Carapicuiba", "osasco": "Osasco", "vargemgrande": "Vargem Grande Paulista",
+            "cotia": "Cotia", "embudasartes": "Embu das Artes", "taboaodaserra": "Taboao da Serra",
+            "itapecericadaserra": "Itapecerica da Serra", "socorro": "Socorro", "parelheiros": "Parelheiros",
+            "campolimpo": "Campo Limpo", "mboimirim": "M Boi Mirim", "cidadeademar": "Cidade Ademar",
+            "santoamaro": "Santo Amaro", "ipiranga": "Ipiranga", "jabaquara": "Jabaquara",
+            "pinheiros": "Pinheiros", "vilamariana": "Vila Mariana", "lapa": "Lapa",
+            "butanta": "Butanta", "mooca": "Mooca", "sé": "Sé", "vilaprudente": "Vila Prudente",
+            "aricanduva": "Aricanduva", "saomateus": "São Mateus", "itaquera": "Itaquera",
+            "guaianases": "Guaianases", "cidadetiradentes": "Cidade Tiradentes", "saomiguel": "São Miguel",
+            "itaim": "Itaim", "penha": "Penha", "ermelimdomatarazzo": "Ermelimdo Matarazzo",
+            "tremembe": "Tremembe", "vilamaria": "Vila Maria", "anhanguera": "Anhanguera",
+            "pirituba": "Pirituba", "casaverde": "Casa Verde", "freguesiadoo": "Freguesia do Ó",
+            "santana": "Santana", "itaquaquecetuba": "Itaquaquecetuba", "miracatu": "Miracatu",
+            "registro": "Registro", "apiai": "Apiai", "itarare": "Itarare", "itapeva": "Itapeva",
+            "caraguatatuba": "Caraguatatuba", "santos": "Santos", "saovicente": "São Vicente",
+            "guaratinqueta": "Guaratinqueta", "taubate": "Taubate", "saojosedoscampos": "São Jose dos Campos",
+            "jacarei": "Jacarei", "grandesaopaulo": "Grande São Paulo", "bragancapaulista": "Braganca Paulista",
+            "pindamonhangaba": "Pindamonhangaba", "sorocaba": "Sorocaba", "jundiai": "Jundiai",
+            "itu": "Itu", "saoroque": "Saoroque", "itapetinga": "Itapetinga", "votorantim": "Votorantim",
+            "capivari": "Capivari", "botucatu": "Botucatu", "piraju": "Piraju", "avare": "Avare",
+            "assis": "Assis", "ourinhos": "Ourinhos", "presidenteprudente": "Presidente Prudente",
+            "mirantedoparanapanema": "Mirante do Paranapanema", "adamantina": "Adamantina",
+            "santoanastacio": "Santo Anastacio", "jales": "Jales", "andradina": "Andradina",
+            "fernandopolis": "Fernandopolis", "votuporanga": "Votuporanga", "saojosedoriopreto": "São Jose do Rio Preto",
+            "josebonifacio": "Jose Bonifacio", "birigui": "Birigui", "aracatuba": "Aracatuba",
+            "lins": "Lins", "penapolis": "Penapolis", "marilia": "Marilia", "tupa": "Tupã",
+            "jau": "Jau", "piracicaba": "Piracicaba", "campinas": "Campinas", "sumare": "Sumare",
+            "americana": "Americana", "mogimirim": "Mogi Mirim", "limeira": "Limeira",
+            "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "saojoaodaboavista": "São João da Boa Vista",
+            "ribeiraopreto": "Ribeirao Preto", "araraquara": "Araraquara", "jaboticabal": "Jaboticabal",
+            "taquaritinga": "Taquaritinga", "catanduva": "Catanduva", "franca": "Franca",
+            "sertaozinho": "Sertãozinho", "saojoaquimdabarra": "São Joaquim da Barra", "barretos": "Barretos",
+            "bauru": "Bauru"
+        };
 
-    // --- DICIONÁRIO DE NOMES (Garanta que os IDs aqui batam com os IDs dos Paths no seu SVG) ---
-    const DICIONARIO_NOMES = {
-        "pirituba": "Pirituba",
-        "vargemgrande": "Vargem Grande Paulista",
-        "guarulhos": "Guarulhos",
-        "osasco": "Osasco",
-        "taubate": "Taubaté",
-        "sjcampos": "São José dos Campos",
-        "itapevi": "Itapevi",
-        "cotia": "Cotia",
-        "mogidascruzes": "Mogi das Cruzes",
-        "grandesaopaulo": "Grande São Paulo",
-        "freguesia": "Freguesia do Ó"
-    };
+        function obterNomeFormatado(idPath) {
+            if (!idPath) return "Selecione uma região";
+            const idLimpo = idPath.toLowerCase().trim();
+            return DICIONARIO_NOMES[idLimpo] || idLimpo.toUpperCase();
+        }
 
-    function obterNomeFormatado(idPath) {
-        const idLimpo = idPath.toLowerCase().trim();
-        if (DICIONARIO_NOMES[idLimpo]) return DICIONARIO_NOMES[idLimpo];
-        // Caso não esteja no dicionário, capitaliza cada palavra separada por espaço ou traço
-        return idLimpo.replace(/(^\w|\s\w)/g, m => m.toUpperCase());
-    }
+        async function carregarDados() {
+            try {
+                const resposta = await fetch(LINK_PLANILHA + "&cb=" + new Date().getTime());
+                const texto = await resposta.text();
+                const linhas = texto.split(/\r?\n/).filter(l => l.trim() !== "");
+                const sep = linhas[0].includes(';') ? ';' : ',';
+                
+                dadosGerais = linhas.slice(1).map(linha => {
+                    const col = parseCSVLine(linha, sep);
+                    const get = (idx) => col[idx] ? col[idx].replace(/^["']|["']$/g, '').trim() : '';
+                    return {
+                        id: get(0).toLowerCase(),
+                        nome: get(2), estoque: get(3),
+                        endereco: get(4) + ", " + get(5),
+                        previsao: get(7), valor: get(8),
+                        plantas: `de ${get(9)} até ${get(10)}`,
+                        obra: get(11), local: get(12),
+                        mobilidade: get(13), cultura: get(14), comercio: get(15), saude: get(16),
+                        dica: get(17), book: get(18), video1: get(19)
+                    };
+                }).filter(item => item.id !== "");
+            } catch (e) { console.error("Erro no carregamento:", e); }
+        }
 
-    function resetInterface(limparTitulo = true) {
-        document.getElementById("btRes-container").innerHTML = "";
-        document.getElementById("dica-corretor-box").style.display = "none";
-        document.getElementById("residencial-info").style.display = "none";
-        if (limparTitulo) {
+        function parseCSVLine(line, sep) {
+            const result = []; let cur = ''; let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') inQuotes = !inQuotes;
+                else if (char === sep && !inQuotes) { result.push(cur.trim()); cur = ''; }
+                else cur += char;
+            }
+            result.push(cur.trim()); return result;
+        }
+
+        function resetInterface() {
+            document.getElementById("btRes-container").innerHTML = "";
             document.getElementById("titulo-dinamico").textContent = "";
+            document.getElementById("residencial-info").style.display = "none";
+            document.getElementById("dica-corretor-box").style.display = "none";
         }
-    }
 
-    async function carregarDados() {
-        try {
-            const resposta = await fetch(LINK_PLANILHA + "&cb=" + new Date().getTime());
-            const texto = await resposta.text();
-            const linhas = texto.split(/\r?\n/).filter(l => l.trim() !== "");
-            const sep = linhas[0].includes(';') ? ';' : ',';
-            dadosGerais = linhas.slice(1).map(linha => {
-                const col = parseCSVLine(linha, sep);
-                const get = (idx) => col[idx] ? col[idx].replace(/^["']|["']$/g, '').trim() : '';
-                return {
-                    id: get(0).toLowerCase(),
-                    nome: get(2),
-                    estoque: get(3),
-                    endereco: get(4) + " - " + get(5),
-                    previsao: get(7),
-                    valor: get(8),
-                    plantas: `de ${get(9)} até ${get(10)}`,
-                    obra: get(11),
-                    local: get(12),
-                    mobilidade: get(13),
-                    cultura: get(14),
-                    comercio: get(15),
-                    saude: get(16),
-                    dica: get(17),
-                    book: get(18),
-                    video1: get(19),
-                    video2: get(20)
-                };
-            }).filter(item => item.id !== "");
-        } catch (e) { console.error("Erro no carregamento:", e); }
-    }
-
-    function parseCSVLine(line, sep) {
-        const result = [];
-        let cur = ''; let inQuotes = false;
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-            if (char === '"') inQuotes = !inQuotes;
-            else if (char === sep && !inQuotes) { result.push(cur.trim()); cur = ''; }
-            else cur += char;
-        }
-        result.push(cur.trim());
-        return result;
-    }
-
-    function copiarLink(conteudo, botao) {
-        if (!conteudo) return;
-        let linkFinal = conteudo.toLowerCase().startsWith("http") ? conteudo : BASE_URL_GITHUB + encodeURIComponent(conteudo);
-        navigator.clipboard.writeText(linkFinal).then(() => {
-            const original = botao.innerHTML;
-            botao.innerHTML = "✅ Link Copiado!";
-            setTimeout(() => { botao.innerHTML = original; }, 2000);
-        });
-    }
-
-    function gerarBotoes(idPath) {
-        resetInterface(false);
-        const container = document.getElementById("btRes-container");
-        const titulo = document.getElementById("titulo-dinamico");
-        
-        // CORREÇÃO: Aplica o nome formatado corretamente
-        titulo.textContent = "MRV em " + obterNomeFormatado(idPath);
-        
-        const filtrados = dadosGerais.filter(d => d.id === idPath.toLowerCase());
-        
-        filtrados.forEach(res => {
-            const btn = document.createElement("button");
-            btn.className = "btRes";
-            let statusHTML = "";
-            let estoqueNum = parseInt(res.estoque);
-
-            if (res.estoque === "0" || res.estoque?.toLowerCase() === "vendido") {
-                statusHTML = `<span class="vendido">VENDIDO</span>`;
-            } else if (!isNaN(estoqueNum) && estoqueNum <= 5) {
-                statusHTML = `<span class="estoque-alerta">restam ${estoqueNum} unidades</span>`;
-            } else {
-                statusHTML = `<span>restam ainda ${res.estoque} unidades</span>`;
+        function gerarBotoes(idPath) {
+            resetInterface();
+            const container = document.getElementById("btRes-container");
+            const titulo = document.getElementById("titulo-dinamico");
+            
+            titulo.textContent = "MRV em " + obterNomeFormatado(idPath);
+            const filtrados = dadosGerais.filter(d => d.id === idPath.toLowerCase());
+            
+            if(filtrados.length === 0) {
+                container.innerHTML = "<p style='color:#999; font-style:italic;'>Nenhum residencial cadastrado.</p>";
+                return;
             }
 
-            btn.innerHTML = `<strong>${res.nome}</strong> - ${statusHTML}`;
-            btn.onclick = () => {
-                document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
-                btn.classList.add("btRes-ativo");
-                const dicaBox = document.getElementById("dica-corretor-box");
-                if (res.dica) {
-                    dicaBox.innerHTML = `💡 <strong>Dica do Corretor:</strong> ${res.dica}`;
-                    dicaBox.style.display = "block";
-                } else { dicaBox.style.display = "none"; }
-                abrirFicha(res);
-            };
-            container.appendChild(btn);
-        });
-    }
+            filtrados.forEach(res => {
+                const btn = document.createElement("button");
+                btn.className = "btRes";
+                btn.innerHTML = `<strong>${res.nome}</strong> - restam ${res.estoque} unidades`;
+                btn.onclick = () => {
+                    document.querySelectorAll(".btRes").forEach(b => b.classList.remove("btRes-ativo"));
+                    btn.classList.add("btRes-ativo");
+                    abrirFicha(res);
+                };
+                container.appendChild(btn);
+            });
+        }
 
-    function abrirFicha(res) {
-        const infoBox = document.getElementById("residencial-info");
-        infoBox.style.display = "block";
-        const bBook = res.book ? `<button class="btn-acao btn-book" onclick="copiarLink('${res.book}', this)">📋 Copiar Link do Book PDF</button>` : '';
-        const bVid1 = res.video1 ? `<button class="btn-acao btn-video" onclick="copiarLink('${res.video1}', this)">🎥 Copiar Vídeo Decorado 1</button>` : '';
-        const bVid2 = res.video2 ? `<button class="btn-acao btn-video" onclick="copiarLink('${res.video2}', this)">🎥 Copiar Vídeo Decorado 2</button>` : '';
+        function abrirFicha(res) {
+            const infoBox = document.getElementById("residencial-info");
+            const dicaBox = document.getElementById("dica-corretor-box");
+            infoBox.style.display = "block";
+            
+            if (res.dica) {
+                dicaBox.innerHTML = `💡 <strong>Dica do Corretor:</strong> ${res.dica}`;
+                dicaBox.style.display = "block";
+            } else { dicaBox.style.display = "none"; }
 
-        infoBox.innerHTML = `
-            <h3 style="color:rgb(6,94,3); margin-bottom:10px;">${res.nome}</h3>
-            <p style="margin-bottom:10px;">📍 ${res.endereco}</p>
-            <div class="grid-tecnico">
-                <div><span class="label">💰 Preço:</span><br>${res.valor}</div>
-                <div><span class="label">🔑 Entrega:</span><br>${res.previsao}</div>
-                <div><span class="label">📐 Plantas:</span><br>${res.plantas}</div>
-                <div><span class="label">🏗️ Obra:</span><br>${res.obra}</div>
-            </div>
-            <div class="detalhes-texto">
-                <p><span class="label">📍 Localização:</span> ${res.local}</p>
-                <p><span class="label">🚲 Mobilidade:</span> ${res.mobilidade}</p>
-                <p><span class="label">🎭 Cultura/Lazer:</span> ${res.cultura}</p>
-                <p><span class="label">🛒 Comércio:</span> ${res.comercio}</p>
-                <p><span class="label">🏥 Saúde:</span> ${res.saude}</p>
-            </div>
-            <div style="margin-top:20px; padding-top:15px; border-top: 2px solid #eee;">
-                ${bBook} ${bVid1} ${bVid2}
-            </div>`;
-    }
+            // Restauração de todos os campos técnicos
+            infoBox.innerHTML = `
+                <h3 style="color:rgb(6,94,3); margin-bottom:10px;">${res.nome}</h3>
+                <p style="margin-bottom:10px;">📍 ${res.endereco}</p>
+                <div class="grid-tecnico">
+                    <div><span class="label">💰 Preço:</span><br>${res.valor}</div>
+                    <div><span class="label">🔑 Entrega:</span><br>${res.previsao}</div>
+                    <div><span class="label">📐 Plantas:</span><br>${res.plantas}</div>
+                    <div><span class="label">🏗️ Obra:</span><br>${res.obra}</div>
+                </div>
+                <div class="detalhes-texto">
+                    <p><span class="label">📍 Localização:</span> ${res.local}</p>
+                    <p><span class="label">🚲 Mobilidade:</span> ${res.mobilidade}</p>
+                    <p><span class="label">🎭 Cultura/Lazer:</span> ${res.cultura}</p>
+                    <p><span class="label">🛒 Comércio:</span> ${res.comercio}</p>
+                    <p><span class="label">🏥 Saúde:</span> ${res.saude}</p>
+                </div>
+                <div style="margin-top:20px;">
+                    ${res.book ? `<button class="btn-acao btn-book" onclick="copiarLink('${res.book}', this)">📋 Link do Book PDF</button>` : ''}
+                    ${res.video1 ? `<button class="btn-acao btn-video" onclick="copiarLink('${res.video1}', this)">🎥 Vídeo Decorado</button>` : ''}
+                </div>`;
+        }
 
-    function configurarEventos() {
-        const display = document.getElementById("nome-regiao");
-        document.querySelectorAll("path").forEach(p => {
-            p.onmouseenter = () => {
-                if (p.closest(".caixa-minimizada")) return;
-                display.textContent = obterNomeFormatado(p.id);
-            };
-            p.onmouseleave = () => {
-                if (p.closest(".caixa-minimizada")) return;
-                display.textContent = pathSelecionado ? obterNomeFormatado(pathSelecionado.id) : "Selecione uma região";
-            };
-            p.onclick = (e) => {
-                if (p.closest(".caixa-minimizada")) return;
-                if (p.id === "grandesaopaulo") {
+        function copiarLink(url, btn) {
+            navigator.clipboard.writeText(url).then(() => {
+                const txt = btn.innerHTML; btn.innerHTML = "✅ Copiado!";
+                setTimeout(() => btn.innerHTML = txt, 2000);
+            });
+        }
+
+        function configurarEventos() {
+            const display = document.getElementById("nome-regiao");
+            document.querySelectorAll("path").forEach(p => {
+                p.onmouseenter = () => {
+                    if (p.closest(".caixa-minimizada")) return;
+                    display.textContent = obterNomeFormatado(p.id);
+                };
+                p.onmouseleave = () => {
+                    if (p.closest(".caixa-minimizada")) return;
+                    display.textContent = pathSelecionado ? obterNomeFormatado(pathSelecionado.id) : "Selecione uma região";
+                };
+                p.onclick = (e) => {
+                    if (p.closest(".caixa-minimizada")) return;
+
+                    if (p.id === "grandesaopaulo") {
+                        e.stopPropagation();
+                        trocarMapas(document.getElementById("container-gsp"));
+                        return;
+                    }
+
+                    if (!p.classList.contains("com-mrv")) return;
                     e.stopPropagation();
-                    trocarMapas(document.getElementById("container-gsp"));
-                    return;
-                }
-                if (!p.classList.contains("com-mrv")) return;
-                e.stopPropagation();
-                if (pathSelecionado === p) {
-                    p.classList.remove("ativo");
-                    pathSelecionado = null;
-                    resetInterface(true);
-                    display.textContent = "Selecione uma região";
-                } else {
-                    if (pathSelecionado) pathSelecionado.classList.remove("ativo");
-                    pathSelecionado = p;
-                    p.classList.add("ativo");
-                    gerarBotoes(p.id);
-                }
-            };
-        });
-    }
+                    
+                    if (pathSelecionado === p) {
+                        p.classList.remove("ativo");
+                        pathSelecionado = null;
+                        resetInterface();
+                    } else {
+                        if (pathSelecionado) pathSelecionado.classList.remove("ativo");
+                        pathSelecionado = p;
+                        p.classList.add("ativo");
+                        gerarBotoes(p.id);
+                    }
+                };
+            });
+        }
 
-    function trocarMapas(el) {
-        if (!el.classList.contains("caixa-minimizada")) return;
-        const container = document.getElementById("mapa-area-container");
-        const atualGrande = document.querySelector(".caixa-maximizada");
-        el.classList.replace("caixa-minimizada", "caixa-maximizada");
-        atualGrande.classList.replace("caixa-maximizada", "caixa-minimizada");
-        container.insertBefore(el, document.getElementById("nome-regiao").nextSibling);
-        pathSelecionado = null;
-        resetInterface(true);
-        document.getElementById("nome-regiao").textContent = "Selecione uma região";
-        document.querySelectorAll("path").forEach(p => p.classList.remove("ativo"));
-    }
+        function trocarMapas(el) {
+            if (!el.classList.contains("caixa-minimizada")) return;
+            const container = document.getElementById("mapa-area-container");
+            const atualMax = document.querySelector(".caixa-maximizada");
+            
+            el.classList.replace("caixa-minimizada", "caixa-maximizada");
+            atualMax.classList.replace("caixa-maximizada", "caixa-minimizada");
+            
+            container.insertBefore(el, document.getElementById("nome-regiao").nextSibling);
+            
+            pathSelecionado = null;
+            document.querySelectorAll("path").forEach(path => path.classList.remove("ativo"));
+            document.getElementById("nome-regiao").textContent = "Selecione uma região";
+            resetInterface(); 
+        }
 
-    window.onload = async () => { await carregarDados(); configurarEventos(); };
-  </script>
+        window.onload = async () => { await carregarDados(); configurarEventos(); };
+    </script>
 </body>
 </html>

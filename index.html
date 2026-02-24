@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -46,18 +45,15 @@
         
         svg { width: 100%; height: 100%; max-height: 65vh; display: block; }
         
-        /* Path base */
         path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s; cursor: default; outline: none; }
         
-        /* Hover apenas para Desktop para evitar sticky hover no mobile */
+        /* Hover Visual apenas em Desktop */
         @media (min-width: 900px) {
             path:hover { fill: #555555; stroke: #000; }
             .com-mrv:hover { fill: rgb(255, 153, 0) !important; }
         }
         
         .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
-        
-        /* Cor de Seleção Ativa */
         .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.5px !important; }
 
         /* --- INTERFACE DE INFO --- */
@@ -812,7 +808,7 @@ class="regiao"
             "lins": "Lins", "penapolis": "Penapolis", "marilia": "Marilia", "tupa": "Tupã",
             "jau": "Jau", "piracicaba": "Piracicaba", "campinas": "Campinas", "sumare": "Sumare",
             "americana": "Americana", "mogimirim": "Mogi Mirim", "limeira": "Limeira",
-            "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "saojoaodaboavista": "São João da Boa Vista",
+            "saocarlos": "São Carlos", "pirassununga": "Pirassununga", "saojojoaodaboavista": "São João da Boa Vista",
             "ribeiraopreto": "Ribeirao Preto", "araraquara": "Araraquara", "jaboticabal": "Jaboticabal",
             "taquaritinga": "Taquaritinga", "catanduva": "Catanduva", "franca": "Franca",
             "sertaozinho": "Sertãozinho", "saojoaquimdabarra": "São Joaquim da Barra", "barretos": "Barretos",
@@ -946,7 +942,9 @@ class="regiao"
 
         function configurarEventos() {
             const display = document.getElementById("nome-regiao");
+            
             document.querySelectorAll("path").forEach(p => {
+                // Evento de Clique/Toque Principal
                 p.onclick = (e) => {
                     if (p.closest(".caixa-minimizada")) return;
 
@@ -956,6 +954,7 @@ class="regiao"
                         return;
                     }
 
+                    // Se for cinza (sem MRV), apenas mostra o nome e reseta seleção anterior
                     if (!p.classList.contains("com-mrv")) {
                         e.stopPropagation();
                         display.textContent = obterNomeFormatado(p.id);
@@ -980,6 +979,14 @@ class="regiao"
                     }
                 };
                 
+                // CORREÇÃO: Touchstart para atualizar o nome no celular sem precisar de Hover CSS
+                p.ontouchstart = (e) => {
+                    if (!p.closest(".caixa-minimizada")) {
+                        display.textContent = obterNomeFormatado(p.id);
+                    }
+                };
+
+                // Mouseenter para Desktop
                 p.onmouseenter = () => {
                     if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
                         display.textContent = obterNomeFormatado(p.id);
@@ -993,10 +1000,8 @@ class="regiao"
             const container = document.getElementById("mapa-area-container");
             const atualMax = document.querySelector(".caixa-maximizada");
             
-            // CORREÇÃO PARA STICKY HOVER: Remove foco/hover forçadamente
             document.querySelectorAll('path').forEach(path => {
                 path.blur(); 
-                // Pequeno truque para forçar o browser a resetar o estado visual do SVG
                 path.style.display = 'none';
                 path.offsetHeight; 
                 path.style.display = '';

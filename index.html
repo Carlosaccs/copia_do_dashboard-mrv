@@ -24,9 +24,9 @@
             .caixa-maximizada { 
                 transform: scale(1.25); 
                 transform-origin: center top;
-                margin-bottom: 40px; /* Compensa o scale para não sobrepor o próximo elemento */
+                margin-bottom: 40px; 
             }
-            .caixa-minimizada { margin-top: -10px !important; } /* Traz o mapa de baixo para cima */
+            .caixa-minimizada { margin-top: -10px !important; }
         }
 
         /* Ajustes Desktop */
@@ -39,23 +39,25 @@
 
         .titulo-mapa { min-height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; text-align: center; z-index: 20; position: relative; }
         
-        /* Caixas sem fundo e sem borda */
         .caixa-mapa { background: transparent; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border: none; }
         .caixa-maximizada { flex: 1; min-height: 320px; z-index: 1; }
         
         .caixa-minimizada { height: 90px; cursor: pointer; opacity: 0.4; filter: grayscale(1); overflow: hidden; z-index: 10; margin-top: 5px; }
-        .caixa-minimizada:hover { opacity: 0.8; filter: grayscale(0.5); }
         
         svg { width: 100%; height: 100%; max-height: 65vh; display: block; }
         
-        /* Efeito de HOVER em todos os paths */
-        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s; cursor: default; }
-        path:hover { fill: #555555; stroke: #000; }
+        /* Path base */
+        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s; cursor: default; outline: none; }
+        
+        /* Hover apenas para Desktop para evitar sticky hover no mobile */
+        @media (min-width: 900px) {
+            path:hover { fill: #555555; stroke: #000; }
+            .com-mrv:hover { fill: rgb(255, 153, 0) !important; }
+        }
         
         .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
-        .com-mrv:hover { fill: rgb(255, 153, 0) !important; }
         
-        /* Cor de Clique (Ativo) */
+        /* Cor de Seleção Ativa */
         .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.5px !important; }
 
         /* --- INTERFACE DE INFO --- */
@@ -978,9 +980,8 @@ class="regiao"
                     }
                 };
                 
-                // Hover universal
                 p.onmouseenter = () => {
-                    if (!p.closest(".caixa-minimizada")) {
+                    if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
                         display.textContent = obterNomeFormatado(p.id);
                     }
                 };
@@ -992,6 +993,15 @@ class="regiao"
             const container = document.getElementById("mapa-area-container");
             const atualMax = document.querySelector(".caixa-maximizada");
             
+            // CORREÇÃO PARA STICKY HOVER: Remove foco/hover forçadamente
+            document.querySelectorAll('path').forEach(path => {
+                path.blur(); 
+                // Pequeno truque para forçar o browser a resetar o estado visual do SVG
+                path.style.display = 'none';
+                path.offsetHeight; 
+                path.style.display = '';
+            });
+
             el.classList.replace("caixa-minimizada", "caixa-maximizada");
             atualMax.classList.replace("caixa-maximizada", "caixa-minimizada");
             

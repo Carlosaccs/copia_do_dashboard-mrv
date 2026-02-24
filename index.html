@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -11,44 +10,52 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; }
         
-        h1 { background: rgb(6, 94, 3); color: white; text-align: center; padding: 15px; font-size: 18px; height: 55px; }
+        h1 { background: rgb(6, 94, 3); color: white; text-align: center; padding: 10px; font-size: 18px; height: 50px; display: flex; align-items: center; justify-content: center; }
         
-        /* Layout Mobile First */
-        .container { display: flex; flex-direction: column; padding: 5px; gap: 10px; }
+        .container { display: flex; flex-direction: column; padding: 5px; gap: 5px; }
         
         .mapa-area { width: 100%; display: flex; flex-direction: column; order: 1; overflow: hidden; }
         .info { width: 100%; order: 2; padding: 10px; }
 
-        /* Ajustes Mobile: Aumento do Mapa e Aproximação */
+        /* Ajustes Mobile: Máxima Aproximação e Zoom */
         @media (max-width: 899px) {
+            .container { padding: 0; gap: 0; }
+            .titulo-mapa { margin-top: 5px; margin-bottom: 0 !important; font-size: 16px; }
             .caixa-maximizada { 
-                transform: scale(1.2); 
-                transform-origin: center center;
-                margin: 20px 0; /* Espaço para o scale não cortar */
+                transform: scale(1.25); 
+                transform-origin: center top;
+                margin-bottom: 40px; /* Compensa o scale para não sobrepor o próximo elemento */
             }
-            .caixa-mapa { padding: 0; }
+            .caixa-minimizada { margin-top: -10px !important; } /* Traz o mapa de baixo para cima */
         }
 
         /* Ajustes Desktop */
         @media (min-width: 900px) {
             body { overflow: hidden; }
-            .container { flex-direction: row; gap: 30px; height: calc(100% - 55px); padding: 15px; }
+            .container { flex-direction: row; gap: 30px; height: calc(100% - 50px); padding: 15px; }
             .mapa-area { flex: 1; height: 100%; order: 1; }
             .info { flex: 0 0 550px; height: 100%; overflow-y: auto; padding-left: 10px; border-left: 1px solid #f0f0f0; order: 2; }
         }
 
-        .titulo-mapa { min-height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; margin-bottom: 5px; text-align: center; z-index: 20; position: relative; }
+        .titulo-mapa { min-height: 35px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #333; text-align: center; z-index: 20; position: relative; }
         
-        .caixa-mapa { background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; }
+        /* Caixas sem fundo e sem borda */
+        .caixa-mapa { background: transparent; display: flex; align-items: center; justify-content: center; position: relative; width: 100%; border: none; }
         .caixa-maximizada { flex: 1; min-height: 320px; z-index: 1; }
         
-        .caixa-minimizada { height: 90px; cursor: pointer; opacity: 0.4; filter: grayscale(1); overflow: hidden; z-index: 10; background: #f9f9f9 !important; border: 1px solid #ddd !important; margin-top: 5px; }
+        .caixa-minimizada { height: 90px; cursor: pointer; opacity: 0.4; filter: grayscale(1); overflow: hidden; z-index: 10; margin-top: 5px; }
+        .caixa-minimizada:hover { opacity: 0.8; filter: grayscale(0.5); }
         
         svg { width: 100%; height: 100%; max-height: 65vh; display: block; }
-        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s; }
+        
+        /* Efeito de HOVER em todos os paths */
+        path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s; cursor: default; }
+        path:hover { fill: #555555; stroke: #000; }
         
         .com-mrv { fill: rgb(6, 94, 3) !important; cursor: pointer; }
-        /* Somente paths ativos (com MRV) recebem a cor laranja */
+        .com-mrv:hover { fill: rgb(255, 153, 0) !important; }
+        
+        /* Cor de Clique (Ativo) */
         .ativo { fill: rgb(255, 153, 0) !important; stroke: #000 !important; stroke-width: 1.5px !important; }
 
         /* --- INTERFACE DE INFO --- */
@@ -760,7 +767,6 @@ class="regiao"
 
     <script>
         const LINK_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqmzCyl1ScBsPr6d4wtq3tADya58_T9DVkhcUSDgmbwNwyZoc4tPrOMUrt8kB7UJH6tiHr_KVxfS2W/pub?output=csv";
-        const BASE_URL_GITHUB = "https://carlosaccs.github.io/copia_do_dashboard-mrv_23_02/";
         
         let dadosGerais = [];
         let pathSelecionado = null;
@@ -887,7 +893,7 @@ class="regiao"
             if(window.innerWidth < 900) {
                 setTimeout(() => {
                     document.getElementById("painel-info").scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
+                }, 150);
             }
         }
 
@@ -925,7 +931,7 @@ class="regiao"
             if(window.innerWidth < 900) {
                 setTimeout(() => {
                     infoBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
+                }, 150);
             }
         }
 
@@ -948,7 +954,6 @@ class="regiao"
                         return;
                     }
 
-                    // CORREÇÃO: Paths cinza (sem .com-mrv) apenas mostram o nome, mas não "ativam"
                     if (!p.classList.contains("com-mrv")) {
                         e.stopPropagation();
                         display.textContent = obterNomeFormatado(p.id);
@@ -973,8 +978,9 @@ class="regiao"
                     }
                 };
                 
+                // Hover universal
                 p.onmouseenter = () => {
-                    if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
+                    if (!p.closest(".caixa-minimizada")) {
                         display.textContent = obterNomeFormatado(p.id);
                     }
                 };

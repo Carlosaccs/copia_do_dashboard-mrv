@@ -307,46 +307,61 @@ function configurarEventos() {
     const display = document.getElementById("nome-regiao");
     document.querySelectorAll("path").forEach(p => {
         p.onclick = (e) => {
-            // 1. Bloqueia cliques em mapas minimizados
             if (p.closest(".caixa-minimizada")) return;
-
-            // 2. Lógica para o botão "Grande São Paulo"
             const idNormalizado = p.id.toLowerCase().replace(/[\s-_]/g, '');
             if (idNormalizado === "grandesaopaulo") {
                 e.stopPropagation();
                 trocarMapas(document.getElementById("container-gsp"));
                 return;
             }
-
-            e.stopPropagation();
-
-            // 3. ATUALIZA O TEXTO (Para qualquer path, cinza ou verde)
-            display.textContent = obterNomeFormatado(p.id);
-
-            // 4. SELEÇÃO VISUAL E DADOS (Apenas para paths verdes)
-            if (p.classList.contains("commrv")) {
-                if (pathSelecionado === p) {
-                    // Desmaca se clicar no mesmo
-                    p.classList.remove("ativo");
-                    pathSelecionado = null;
-                    display.textContent = "Toque em uma região";
-                    resetInterface();
-                } else {
-                    // Marca o novo e carrega botões
-                    if (pathSelecionado) pathSelecionado.classList.remove("ativo");
-                    pathSelecionado = p;
-                    p.classList.add("ativo");
-                    gerarBotoes(p.id);
-                }
-            } else {
-                // Se clicou no CINZA: desmarca o anterior e limpa a lista, mas mantém o nome no display
-                if (pathSelecionado) pathSelecionado.classList.remove("ativo");
+            if (!p.classList.contains("commrv")) {
+                display.textContent = obterNomeFormatado(p.id);
+                if(pathSelecionado) pathSelecionado.classList.remove("ativo");
                 pathSelecionado = null;
                 resetInterface();
+                return;
+            }
+            e.stopPropagation();
+            if (pathSelecionado === p) {
+                p.classList.remove("ativo");
+                pathSelecionado = null;
+                display.textContent = "Toque em uma região";
+                resetInterface();
+            } else {
+                if (pathSelecionado) pathSelecionado.classList.remove("ativo");
+                pathSelecionado = p;
+                p.classList.add("ativo");
+                display.textContent = obterNomeFormatado(p.id);
+                gerarBotoes(p.id);
+            }
+        };
+        p.onmouseenter = () => {
+            if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
+                display.textContent = obterNomeFormatado(p.id);
+            }
+        };
+        p.onmouseleave = () => {
+            if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
+                display.textContent = pathSelecionado ? obterNomeFormatado(pathSelecionado.id) : "Toque em uma região";
             }
         };
     });
 }
+
+function trocarMapas(el) {
+    if (!el.classList.contains("caixa-minimizada")) return;
+    const container = document.getElementById("mapa-area-container");
+    const atualMax = document.querySelector(".caixa-maximizada");
+    el.classList.replace("caixa-minimizada", "caixa-maximizada");
+    atualMax.classList.replace("caixa-maximizada", "caixa-minimizada");
+    container.insertBefore(el, document.getElementById("nome-regiao").nextSibling);
+    pathSelecionado = null;
+    document.querySelectorAll("path").forEach(path => path.classList.remove("ativo"));
+    document.getElementById("nome-regiao").textContent = "Toque em uma região";
+    resetInterface(); 
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 window.onload = async () => { 
     await carregarDados(); 
     configurarEventos(); 

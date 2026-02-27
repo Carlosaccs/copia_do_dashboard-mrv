@@ -102,8 +102,31 @@ path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s;
 }
 
 
+
 #titulo-dinamico { margin-bottom: 12px; color: rgb(6, 94, 3); font-size: 20px; }
-.btRes { width: 100%; padding: 15px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; text-align: left; background: #fafafa; margin-bottom: 8px; font-size: 14px; }
+
+/* Botão da lista (Estado Normal) - Altura reduzida em 25% */
+.btRes { 
+    width: 100%; 
+    padding: 8px 15px; /* Reduzido de 15px para 11px para diminuir a altura */
+    border: 1px solid #eee; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    text-align: left; 
+    background: #fafafa; 
+    margin-bottom: 8px; 
+    line-height: 1.2; /* Reduz o espaço entre linhas do texto */
+    min-height: 0 !important; /* Garante que nenhuma regra antiga force altura mínima */
+    transition: all 0.2s ease;
+}
+
+/* --- Efeito Hover: Sem deslocamento e com contorno preto --- */
+.btRes:hover {
+    background: #f0f0f0 !important; 
+    border-color: #000000 !important; /* Contorno preto como solicitado */
+    transform: none !important;      /* Remove o deslocamento lateral */
+}
+
 .btRes-ativo { border-color: rgb(255, 153, 0) !important; background: #fff !important; font-weight: bold; border-width: 2px !important; }
 
 #dica-corretor-box { background: #f0fdf4; border-radius: 8px; padding: 12px; margin-top: 10px; border-left: 5px solid rgb(6, 94, 3); display: none; font-size: 14px; }
@@ -113,33 +136,36 @@ path { fill: #888888; stroke: #ffffff; stroke-width: 0.6; transition: fill 0.1s;
 .grid-tecnico { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
 .label { font-weight: bold; color: #333; font-size: 13px; }
 
-/* .btn-acao { display: block; width: 100%; margin-top: 10px; padding: 15px; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; text-decoration: none; }
-/* .btn-book { background: #16a34a; } .btn-video { background: #2563eb; }
-/* Cor padrão para todos os botões de ação (Azul) */
+
+/* --- BOTÕES DE AÇÃO (Versão Slim 80% e Cores do Mapa) --- */
 .btn-acao {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    padding: 15px;
-    color: white !important; /* Força o texto branco para legibilidade */
-    border: none;
-    border-radius: 8px;
+    display: block !important;
+    width: 100% !important;
+    margin-top: 8px;
+    /* Redução de 80%: de 15px para 3px ou 4px */
+    padding: 4px 10px !important; 
+    color: white !important;
+    border: 2px solid transparent !important; /* Borda preparada para o hover */
+    border-radius: 6px;
     font-weight: bold;
     cursor: pointer;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     text-decoration: none;
-    background: #2563eb; /* Azul padrão dos vídeos */
-    transition: background 0.3s;
+    transition: border-color 0.2s, filter 0.2s;
 }
 
-/* Exceção específica para o botão de Book (Mantém Verde) */
-.btn-book {
-    background: #16a34a !important;
-}
+/* Cores fixas baseadas no Mapa */
+.btn-book { background: rgb(6, 94, 3) !important; } /* Verde MRV */
+.btn-video, .btn-acao { background: rgb(255, 153, 0); } /* Laranja Seleção */
 
-/* Efeito ao passar o mouse para todos */
+/* --- HOVER CORRIGIDO: Mantém a cor e fica com contorno preto --- */
 .btn-acao:hover {
-    filter: brightness(1.1);
-    background: #000; /* Fica preto ao passar o mouse, se desejar manter o padrão */
+    border-color: #000000 !important; /* Contorno preto */
+    filter: brightness(1.1);          /* Leve brilho apenas para feedback */
+    /* REMOVEMOS o background: #000 para a cor não mudar para preto */
+}
+
+.btn-book:hover {
+    background: rgb(6, 94, 3) !important; /* Força manter o verde no hover */
 }

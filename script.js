@@ -307,20 +307,23 @@ function configurarEventos() {
     const display = document.getElementById("nome-regiao");
     document.querySelectorAll("path").forEach(p => {
         p.onclick = (e) => {
-            if (p.closest(".caixa-minimizada")) return;
+            // 1. Permite o clique se for o botão de troca de mapa (GSP)
             const idNormalizado = p.id.toLowerCase().replace(/[\s-_]/g, '');
             if (idNormalizado === "grandesaopaulo") {
                 e.stopPropagation();
                 trocarMapas(document.getElementById("container-gsp"));
                 return;
             }
+
+            // 2. Bloqueia cliques em mapas minimizados (que você já tinha)
+            if (p.closest(".caixa-minimizada")) return;
+
+            // 3. TRAVA: Se NÃO for uma cidade com MRV (verde), ignore o clique
             if (!p.classList.contains("commrv")) {
-                display.textContent = obterNomeFormatado(p.id);
-                if(pathSelecionado) pathSelecionado.classList.remove("ativo");
-                pathSelecionado = null;
-                resetInterface();
-                return;
+                return; 
             }
+
+            // 4. Lógica de seleção para cidades com MRV (verde)
             e.stopPropagation();
             if (pathSelecionado === p) {
                 p.classList.remove("ativo");
@@ -335,19 +338,8 @@ function configurarEventos() {
                 gerarBotoes(p.id);
             }
         };
-        p.onmouseenter = () => {
-            if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
-                display.textContent = obterNomeFormatado(p.id);
-            }
-        };
-        p.onmouseleave = () => {
-            if (window.innerWidth >= 900 && !p.closest(".caixa-minimizada")) {
-                display.textContent = pathSelecionado ? obterNomeFormatado(pathSelecionado.id) : "Toque em uma região";
-            }
-        };
     });
 }
-
 function trocarMapas(el) {
     if (!el.classList.contains("caixa-minimizada")) return;
     const container = document.getElementById("mapa-area-container");

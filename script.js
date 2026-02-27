@@ -307,7 +307,10 @@ function configurarEventos() {
     const display = document.getElementById("nome-regiao");
     document.querySelectorAll("path").forEach(p => {
         p.onclick = (e) => {
-            // 1. Permite o clique se for o botão de troca de mapa (GSP)
+            // 1. Bloqueia cliques em mapas minimizados
+            if (p.closest(".caixa-minimizada")) return;
+
+            // 2. Lógica especial para o botão "Grande São Paulo"
             const idNormalizado = p.id.toLowerCase().replace(/[\s-_]/g, '');
             if (idNormalizado === "grandesaopaulo") {
                 e.stopPropagation();
@@ -315,16 +318,20 @@ function configurarEventos() {
                 return;
             }
 
-            // 2. Bloqueia cliques em mapas minimizados (que você já tinha)
-            if (p.closest(".caixa-minimizada")) return;
+            e.stopPropagation();
 
-            // 3. TRAVA: Se NÃO for uma cidade com MRV (verde), ignore o clique
+            // 3. Atualiza SEMPRE o nome da região no texto acima, seja cinza ou verde
+            display.textContent = obterNomeFormatado(p.id);
+
+            // 4. TRAVA DE DADOS: Se NÃO for verde (commrv), para aqui (não seleciona nem busca residenciais)
             if (!p.classList.contains("commrv")) {
+                if (pathSelecionado) pathSelecionado.classList.remove("ativo");
+                pathSelecionado = null;
+                resetInterface(); // Limpa a lista de botões da direita
                 return; 
             }
 
-            // 4. Lógica de seleção para cidades com MRV (verde)
-            e.stopPropagation();
+            // 5. Lógica de seleção APENAS para cidades com MRV (verde)
             if (pathSelecionado === p) {
                 p.classList.remove("ativo");
                 pathSelecionado = null;
@@ -334,26 +341,12 @@ function configurarEventos() {
                 if (pathSelecionado) pathSelecionado.classList.remove("ativo");
                 pathSelecionado = p;
                 p.classList.add("ativo");
-                display.textContent = obterNomeFormatado(p.id);
+                // Já atualizamos o display.textContent no passo 3
                 gerarBotoes(p.id);
             }
         };
     });
 }
-function trocarMapas(el) {
-    if (!el.classList.contains("caixa-minimizada")) return;
-    const container = document.getElementById("mapa-area-container");
-    const atualMax = document.querySelector(".caixa-maximizada");
-    el.classList.replace("caixa-minimizada", "caixa-maximizada");
-    atualMax.classList.replace("caixa-maximizada", "caixa-minimizada");
-    container.insertBefore(el, document.getElementById("nome-regiao").nextSibling);
-    pathSelecionado = null;
-    document.querySelectorAll("path").forEach(path => path.classList.remove("ativo"));
-    document.getElementById("nome-regiao").textContent = "Toque em uma região";
-    resetInterface(); 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
 window.onload = async () => { 
     await carregarDados(); 
     configurarEventos(); 

@@ -130,19 +130,15 @@
         <div class="modal-caixa" onclick="event.stopPropagation()">
             <span class="modal-fechar" onclick="toggleModal(false)">&times;</span>
             <div class="modal-titulo">Sobre o Projeto</div>
-            
             <div class="modal-corpo">
                 <p>Este dashboard foi desenvolvido para agilizar o acesso a informações básicas sobre os residenciais MRV de SP, auxiliando no atendimento rápido aos nossos leads.</p>
-                
                 <p class="modal-aviso">⚠️ <strong>Aviso Importante:</strong> As informações mostradas podem estar desatualizadas e até incorretas.</p>
-                
                 <div class="modal-colab">
                     <p>🤝 <strong>Colabore com o projeto!</strong></p>
                     <p>Sentiu falta de algum material?<br>
                     Se você tiver <strong>Books (PDF), Vídeos</strong> ou fotos de decorados que ainda não estão aqui, se encontrou alguma informação incorreta, se pode colaborar com dicas melhores ou observações sobre um residencial, por favor, envie para que possamos manter a ferramenta completa para todos.</p>
                 </div>
             </div>
-
             <a href="https://wa.me/551192617026" target="_blank" class="btn-whatsapp">Carlos Custódio - (11) 9261-7026</a>
         </div>
     </div>
@@ -191,7 +187,9 @@
                         obs: col[18],
                         book_cli: col[19], book_cor: col[20], vid1: col[21], vid2: col[22],
                         p_var: col[23], p_sem: col[24], p_gar: col[25], p_o1: col[26], p_o2: col[27],
-                        div1: col[30], div2: col[31], div3: col[32], div4: col[33], div5: col[34]
+                        loc_link: col[28], imp_link: col[29],
+                        div1: col[30], div2: col[31], div3: col[32], div4: col[33], div5: col[34],
+                        div6: col[35], div7: col[36], div8: col[37], div9: col[38], div10: col[39]
                     };
                 }).filter(item => item !== null);
 
@@ -265,17 +263,30 @@
                     ${renderLinkRow("Book Cliente", item.book_cli, "📄")}
                     ${renderLinkRow("Book Corretor", item.book_cor, "🔐")}
                     ${renderLinkRow("Vídeo 1", item.vid1, "🎥")}
-                    ${renderLinkRow("Vídeo 2", item.vid2, "🎥")}
+                    ${renderLinkRow("Vídeo 1", item.vid2, "🎥")}
 
-                    <span class="secao-titulo">Plantas</span>
+                    <span class="secao-titulo">Plantas e Modelos</span>
                     ${renderLinkRow("Apto c/ Varanda", item.p_var, "🏢")}
                     ${renderLinkRow("Apto s/ Varanda", item.p_sem, "🏢")}
                     ${renderLinkRow("Apto Garden", item.p_gar, "🏡")}
+                    ${renderLinkRow("Outro Apto 1", item.p_o1, "🏠")}
+                    ${renderLinkRow("Outro Apto 2", item.p_o2, "🏠")}
+
+                    <span class="secao-titulo">Mapas e Implantação</span>
+                    ${renderLinkRow("Localização (Link)", item.loc_link, "🗺️")}
+                    ${renderLinkRow("Implantação", item.imp_link, "🏗️")}
 
                     <span class="secao-titulo">Diversos</span>
                     ${renderLinkRow("Diversos 1", item.div1, "📁")}
                     ${renderLinkRow("Diversos 2", item.div2, "📁")}
                     ${renderLinkRow("Diversos 3", item.div3, "📁")}
+                    ${renderLinkRow("Diversos 4", item.div4, "📁")}
+                    ${renderLinkRow("Diversos 5", item.div5, "📁")}
+                    ${renderLinkRow("Diversos 6", item.div6, "📁")}
+                    ${renderLinkRow("Diversos 7", item.div7, "📁")}
+                    ${renderLinkRow("Diversos 8", item.div8, "📁")}
+                    ${renderLinkRow("Diversos 9", item.div9, "📁")}
+                    ${renderLinkRow("Diversos 10", item.div10, "📁")}
                 </div>`;
             painel.innerHTML = html;
         }

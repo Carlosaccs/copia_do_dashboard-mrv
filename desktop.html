@@ -33,123 +33,142 @@
             border: none; border-left: 5px solid rgb(6, 94, 3); 
             text-align: left; cursor: pointer; font-size: 0.72rem; 
             border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.1s; color: #333; outline: 2px solid transparent;
+            transition: all 0.1s ease-in-out;
+            color: #333;
+            outline: 2px solid transparent; /* Reserva o espaço do contorno */
         }
 
-        .btRes:hover { background: #f0f0f0; border-left-color: #ff8c00; outline: 2px solid #000; outline-offset: -2px; }
+        /* Hover: Contorno Preto */
+        .btRes:hover { 
+            background: #f0f0f0; 
+            border-left-color: #ff8c00; 
+            outline: 2px solid #000; 
+            outline-offset: -2px;
+        }
 
+        /* ATIVO: Fundo Laranja, Borda Verde, Texto Branco, Contorno Verde FIXO */
         .btRes.ativo { 
-            background: #ff8c00 !important; border-left-color: rgb(6, 94, 3) !important; 
-            color: white !important; outline: 2px solid rgb(6, 94, 3) !important; 
-            outline-offset: -2px; font-weight: bold;
+            background: #ff8c00 !important; 
+            border-left-color: rgb(6, 94, 3) !important; 
+            color: white !important; 
+            outline: 2px solid rgb(6, 94, 3) !important; 
+            outline-offset: -2px;
+            font-weight: bold;
         }
-        .btRes.ativo strong, .btRes.ativo .estoque-status { color: white !important; }
+
+        .btRes.ativo strong, 
+        .btRes.ativo .estoque-status { 
+            color: white !important; 
+        }
         
-        /* --- FICHA TÉCNICA --- */
+        .btRes strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; text-transform: uppercase; }
+        
+        .estoque-status { font-size: 0.65rem; font-weight: bold; color: #666; white-space: nowrap; }
+        .estoque-alerta { color: #d32f2f !important; }
+        .estoque-vendido { text-decoration: line-through; color: #999 !important; }
+
+        /* --- RESTANTE DO LAYOUT --- */
+        .centro-topo { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; border-bottom: 1px solid #eee; background: #fdfdfd; color: #333; }
+        
+        .container-mapas { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; border: none; }
+        .caixa-troca { width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: none; }
+        .pos-cima { height: 78%; z-index: 5; }
+        .pos-baixo { height: 22%; z-index: 10; cursor: pointer; opacity: 0.8; border: none; }
+        
+        svg { width: 100%; height: 100%; display: block; padding: 10px; border: none; }
+        
+        path { stroke: #fff; stroke-width: 0.5; fill: #838383; transition: all 0.2s ease; pointer-events: all; }
+        .pos-cima path:hover { filter: brightness(1.5); stroke: #bbb; cursor: default; }
+        .commrv, #grandesaopaulo { fill: rgb(6, 94, 3) !important; cursor: pointer !important; }
+        .pos-cima path.commrv:hover, .pos-cima #grandesaopaulo:hover { fill: #ff8c00 !important; filter: brightness(1.1); stroke: #fff; stroke-width: 1px; cursor: pointer !important; }
+        .path-ativo { fill: #ff8c00 !important; stroke: #000 !important; stroke-width: 1.8px !important; filter: none !important; z-index: 20; }
+
         .ficha-card { border-left: 5px solid #ff8c00; padding: 12px; border-radius: 4px; background: #fafafa; margin-top: 15px; }
-        .ficha-header { font-size: 0.9rem; color: #065e03; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; }
+        .ficha-header { font-size: 0.9rem; color: #065e03; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .local-info { font-size: 0.75rem; color: #333; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 6px; line-height: 1.4; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        
         .ficha-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .grid-item { font-size: 0.72rem; color: #333; }
-        .grid-label { font-weight: bold; color: #666; font-size: 0.65rem; text-transform: uppercase; }
+        .grid-label { font-weight: bold; color: #666; margin-bottom: 2px; font-size: 0.65rem; text-transform: uppercase; }
+
+        .bloco-texto { margin-bottom: 10px; padding: 10px; border-radius: 6px; font-size: 0.75rem; line-height: 1.5; }
+        .bloco-label { font-weight: bold; text-transform: uppercase; font-size: 0.6rem; display: block; margin-bottom: 5px; }
+        .dica-box { background: #fff5e6; border: 1px solid #ffe0b3; color: #7a5a00; }
+        .obs-box { background: #f1f3f5; border-left: 4px solid #adb5bd; color: #495057; }
+
+        .destaque-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 0.72rem; line-height: 1.3; }
+        .destaque-icon { font-size: 1rem; min-width: 20px; }
+        .destaque-titulo { font-weight: bold; color: #065e03; text-transform: uppercase; display: block; font-size: 0.65rem; }
 
         .secao-titulo { font-size: 0.65rem; font-weight: bold; color: #999; text-transform: uppercase; margin: 15px 0 8px 0; display: block; border-top: 1px solid #eee; padding-top: 10px; }
         
-        .linha-link { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #fff; border: 1px solid #eee; border-radius: 6px; margin-bottom: 6px; position: relative; }
-        .link-nome { font-size: 0.72rem; font-weight: bold; color: #444; }
-        
+        .linha-link { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #fff; border: 1px solid #eee; border-radius: 6px; margin-bottom: 6px; gap: 8px; }
+        .link-nome { font-size: 0.72rem; font-weight: bold; color: #444; display: flex; align-items: center; gap: 6px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .btn-mini { padding: 6px 10px; border: none; border-radius: 4px; color: white; font-size: 0.62rem; font-weight: bold; cursor: pointer; }
         .btn-abrir { background: #065e03; }
         .btn-copiar { background: #ff8c00; }
 
-        /* --- PREVIEW FLUTUANTE (A MÁGICA) --- */
-        #preview-box {
-            position: fixed; width: 300px; height: 200px; background: white;
-            border: 3px solid rgb(6, 94, 3); border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            display: none; z-index: 2000; pointer-events: none; overflow: hidden;
-        }
-        #preview-box iframe { width: 100%; height: 100%; border: none; transform: scale(1); }
-
-        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 10px; position: fixed; z-index: 3000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 0.8rem; }
+        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 10px; position: fixed; z-index: 1000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 0.8rem; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {top: 0; opacity: 0;} to {top: 30px; opacity: 1;} }
         @keyframes fadeout { from {top: 30px; opacity: 1;} to {top: 0; opacity: 0;} }
+
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-caixa { background: white; width: 90%; max-width: 550px; padding: 30px; border-radius: 12px; position: relative; }
+        .btn-whatsapp { display: block; background: #25d366; color: white; padding: 12px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 1rem; margin-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Residenciais MRV em São Paulo</h1>
-        <button class="btn-sobre">Sobre</button>
+        <button class="btn-sobre" onclick="toggleModal(true)">Sobre</button>
     </header>
 
     <div class="main-wrapper">
         <aside class="col-lateral-esq" id="menu-residenciais">Carregando...</aside>
         
         <main class="col-central">
-            <div id="display-nome" style="text-align:center; padding:10px; font-weight:bold;">Selecione uma região</div>
-            <div class="container-mapas" id="container-mapas" style="flex:1;">
-                <div id="caixa-a" style="height:100%;"></div>
+            <div class="centro-topo" id="display-nome">Selecione uma região</div>
+            <div class="container-mapas" id="container-mapas">
+                <div id="caixa-a" class="caixa-troca pos-cima"></div>
+                <div id="caixa-b" class="caixa-troca pos-baixo"></div>
             </div>
         </main>
 
         <aside class="col-lateral-dir" id="detalhes-residencial">
-            <div style="text-align: center; color: #999; margin-top: 50px;">Passe o mouse nos botões de "Abrir" para ver o preview.</div>
+            <div style="text-align: center; color: #999; margin-top: 50px;">Selecione um residencial ou clique em uma região verde do mapa.</div>
         </aside>
     </div>
 
-    <div id="preview-box">
-        <div style="background:#eee; font-size:10px; padding:2px; text-align:center;">Carregando visualização...</div>
-        <iframe id="preview-frame"></iframe>
+    <div class="modal-overlay" id="modal-sobre" onclick="toggleModal(false)">
+        <div class="modal-caixa" onclick="event.stopPropagation()">
+            <div style="color:rgb(6,94,3); font-weight:bold; font-size:1.3rem; margin-bottom:15px; text-align:center;">Sobre o Projeto</div>
+            <div style="font-size:0.85rem; color:#444; line-height:1.6;">
+                <p>Dashboard para consulta rápida de materiais e informações MRV em SP.</p>
+                <p style="margin-top:10px;">⚠️ <strong>Aviso:</strong> Verifique sempre a disponibilidade atual no sistema oficial.</p>
+            </div>
+            <a href="https://wa.me/551192617026" target="_blank" class="btn-whatsapp">Carlos Custódio - (11) 9261-7026</a>
+        </div>
     </div>
 
-    <div id="toast">Copiado!</div>
+    <div id="toast">Link copiado!</div>
 
     <script src="mrv-data.js"></script>
     <script>
-        let DADOS_PLANILHA = [];
+        let pathSelecionado = null;
         let botaoSelecionado = null;
+        let regiaoAtual = "gsp"; 
+        let DADOS_PLANILHA = [];
 
-        // Corrige datas e links do Drive
-        function formatarDataSheets(valor) {
-            if (!valor || isNaN(valor)) return valor || "Sob consulta";
-            const data = new Date((parseFloat(valor) - 25569) * 86400 * 1000);
-            const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-            return `${meses[data.getUTCMonth()]}/${data.getUTCFullYear().toString().slice(-2)}`;
-        }
+        function toggleModal(show) { document.getElementById('modal-sobre').style.display = show ? 'flex' : 'none'; }
 
         function limparLinkDrive(url) {
-            if (!url || !url.includes('drive.google.com')) return url;
+            if (!url || typeof url !== 'string' || !url.includes('drive.google.com')) return url;
             const match = url.match(/\/d\/(.+?)\/|\/d\/(.+?)$|id=(.+?)(&|$)/);
             const id = match ? (match[1] || match[2] || match[3]) : null;
-            return id ? `https://drive.google.com/file/d/${id}/preview` : url;
-        }
-
-        // --- FUNÇÕES DO PREVIEW ---
-        function mostrarPreview(url, event) {
-            const box = document.getElementById('preview-box');
-            const frame = document.getElementById('preview-frame');
-            const linkPreview = limparLinkDrive(url);
-
-            if (linkPreview && linkPreview.includes('http')) {
-                frame.src = linkPreview;
-                box.style.display = 'block';
-                moverPreview(event);
-            }
-        }
-
-        function moverPreview(e) {
-            const box = document.getElementById('preview-box');
-            // Posiciona a caixa um pouco à esquerda e acima do mouse
-            box.style.left = (e.clientX - 320) + 'px';
-            box.style.top = (e.clientY - 100) + 'px';
-        }
-
-        function esconderPreview() {
-            const box = document.getElementById('preview-box');
-            const frame = document.getElementById('preview-frame');
-            box.style.display = 'none';
-            frame.src = ''; // Limpa para não pesar
+            if (id) return `https://drive.google.com/file/d/${id}/preview`;
+            return url;
         }
 
         async function carregarPlanilha() {
@@ -161,50 +180,167 @@
                 
                 DADOS_PLANILHA = linhas.slice(1).map(linha => {
                     const col = linha.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ''));
+                    if (!col[2]) return null;
                     return {
-                        id_path: col[0]?.toLowerCase(),
+                        id_path: col[0].toLowerCase().trim(),
+                        regiao: col[1] ? col[1].toLowerCase() : "",
                         nome: col[2],
-                        estoque: col[3],
-                        endereco: `${col[4]}, ${col[5]}`,
-                        entrega: formatarDataSheets(col[7]),
-                        preco: col[8],
-                        book: col[19],
-                        mapa: col[28]
+                        estoque: col[3] || "0",
+                        endereco_comp: `${col[4]}, ${col[5]} - ${col[6]}`,
+                        entrega: col[7],
+                        menor_preco: col[8],
+                        plantas_txt: `de ${col[9]} até ${col[10]}`,
+                        obra: col[11],
+                        loc: col[12], mob: col[13], cult: col[14], com: col[15], saude: col[16],
+                        dica: col[17],
+                        obs: col[18],
+                        book_cli: col[19], book_cor: col[20], vid1: col[21], vid2: col[22],
+                        p_var: col[23], p_sem: col[24], p_gar: col[25], p_o1: col[26], p_o2: col[27],
+                        loc_link: col[28], imp_link: col[29],
+                        div1: col[30], div2: col[31], div3: col[32], div4: col[33], div5: col[34],
+                        div6: col[35], div7: col[36], div8: col[37], div9: col[38], div10: col[39]
                     };
-                }).filter(i => i.nome);
+                }).filter(item => item !== null);
 
+                DADOS_PLANILHA.sort((a, b) => a.nome.localeCompare(b.nome));
                 gerarListaGeral();
-            } catch (e) { console.error(e); }
+                desenharIniciais();
+            } catch (e) { console.error("Erro no carregamento:", e); }
         }
 
         function renderLinkRow(label, link, ico) {
-            if (!link || link.length < 10) return "";
+            if (!link || link.length < 5) return "";
+            const linkSeguro = limparLinkDrive(link);
             return `<div class="linha-link">
-                <div class="link-nome">${ico} ${label}</div>
+                <div class="link-nome"><span>${ico}</span> ${label}</div>
                 <div>
-                    <button class="btn-mini btn-abrir" 
-                        onmouseenter="mostrarPreview('${link}', event)" 
-                        onmousemove="moverPreview(event)"
-                        onmouseleave="esconderPreview()"
-                        onclick="window.open('${link}', '_blank')">Abrir</button>
-                    <button class="btn-mini btn-copiar" onclick="copiarLink('${link}')">Copiar</button>
+                    <button class="btn-mini btn-abrir" onclick="window.open('${linkSeguro}', '_blank')">Abrir</button>
+                    <button class="btn-mini btn-copiar" onclick="copiarLink('${linkSeguro}', '${label}')">Copiar</button>
                 </div>
             </div>`;
         }
 
-        function exibirPainelDireito(item) {
+        function renderDestaque(titulo, texto, ico) {
+            if (!texto || texto.length < 3) return "";
+            return `<div class="destaque-item">
+                <span class="destaque-icon">${ico}</span>
+                <div><span class="destaque-titulo">${titulo}</span>${texto}</div>
+            </div>`;
+        }
+
+        function copiarLink(url, nome) {
+            navigator.clipboard.writeText(url).then(() => {
+                const x = document.getElementById("toast");
+                x.innerText = `${nome} copiado!`; x.className = "show";
+                setTimeout(() => { x.className = ""; }, 2000);
+            });
+        }
+
+        function exibirPainelDireito(item, nomeCidade) {
             const painel = document.getElementById('detalhes-residencial');
-            painel.innerHTML = `
+            let html = `<div style="font-size:0.75rem; font-weight:bold; color:#065e03; margin-bottom:12px;">MRV em ${nomeCidade}:</div>`;
+            
+            DADOS_PLANILHA.filter(d => d.id_path === item.id_path && d.nome !== item.nome).forEach(v => {
+                html += `<button class="btRes" onclick='selecionarResidencial(DADOS_PLANILHA.find(x=>x.nome=="${v.nome}"), null)'>
+                            <strong>${v.nome}</strong> ${obterHtmlEstoque(v.estoque)}
+                         </button>`;
+            });
+
+            html += `
                 <div class="ficha-card">
-                    <div class="ficha-header">${item.nome}</div>
+                    <div class="ficha-header"><span>${item.nome}</span>${obterHtmlEstoque(item.estoque)}</div>
+                    <div class="local-info"><span>📍</span> <span>${item.endereco_comp}</span></div>
+                    
                     <div class="ficha-grid">
-                        <div class="grid-item"><div class="grid-label">Entrega:</div>${item.entrega}</div>
-                        <div class="grid-item"><div class="grid-label">Preço:</div>${item.preco}</div>
+                        <div class="grid-item"><div class="grid-label">💰 Preço:</div>${item.menor_preco || 'Sob consulta'}</div>
+                        <div class="grid-item"><div class="grid-label">🔑 Entrega:</div>${item.entrega}</div>
+                        <div class="grid-item"><div class="grid-label">📐 Plantas:</div>${item.plantas_txt}</div>
+                        <div class="grid-item"><div class="grid-label">🏗️ Obra:</div>${item.obra}%</div>
                     </div>
-                    <span class="secao-titulo">Arquivos</span>
-                    ${renderLinkRow("Book Cliente", item.book, "📄")}
-                    ${renderLinkRow("Localização", item.mapa, "🗺️")}
+
+                    ${item.dica ? `<div class="bloco-texto dica-box"><span class="bloco-label">💡 DICA</span>${item.dica}</div>` : ''}
+                    ${item.obs ? `<div class="bloco-texto obs-box"><span class="bloco-label">📝 OBSERVAÇÕES</span>${item.obs}</div>` : ''}
+                    
+                    <span class="secao-titulo">Materiais de Venda</span>
+                    ${renderLinkRow("Book Cliente", item.book_cli, "📄")}
+                    ${renderLinkRow("Book Corretor", item.book_cor, "🔐")}
+                    ${renderLinkRow("Vídeo 1", item.vid1, "🎥")}
+                    ${renderLinkRow("Vídeo 2", item.vid2, "🎥")}
+
+                    <span class="secao-titulo">Plantas e Modelos</span>
+                    ${renderLinkRow("Apto c/ Varanda", item.p_var, "🏢")}
+                    ${renderLinkRow("Apto s/ Varanda", item.p_sem, "🏢")}
+                    ${renderLinkRow("Apto Garden", item.p_gar, "🏡")}
+                    ${renderLinkRow("Outro Apto 1", item.p_o1, "🏠")}
+                    ${renderLinkRow("Outro Apto 2", item.p_o2, "🏠")}
+
+                    <span class="secao-titulo">Mapas e Implantação</span>
+                    ${renderLinkRow("Localização (Link)", item.loc_link, "🗺️")}
+                    ${renderLinkRow("Implantação", item.imp_link, "🏗️")}
+
+                    <span class="secao-titulo">Diversos</span>
+                    ${renderLinkRow("Diversos 1", item.div1, "📁")}
+                    ${renderLinkRow("Diversos 2", item.div2, "📁")}
+                    ${renderLinkRow("Diversos 3", item.div3, "📁")}
+                    ${renderLinkRow("Diversos 4", item.div4, "📁")}
+                    ${renderLinkRow("Diversos 5", item.div5, "📁")}
+                    ${renderLinkRow("Diversos 6", item.div6, "📁")}
+                    ${renderLinkRow("Diversos 7", item.div7, "📁")}
+                    ${renderLinkRow("Diversos 8", item.div8, "📁")}
+                    ${renderLinkRow("Diversos 9", item.div9, "📁")}
+                    ${renderLinkRow("Diversos 10", item.div10, "📁")}
                 </div>`;
+            painel.innerHTML = html;
+        }
+
+        function obterHtmlEstoque(valor) {
+            let num = parseInt(valor) || 0;
+            let texto = (valor === "VENDIDO" || num === 0) ? "VENDIDO" : `restam ${num} un.`;
+            let classe = "estoque-status";
+            if (valor === "VENDIDO" || num === 0) classe += " estoque-vendido";
+            else if (num < 6) classe += " estoque-alerta";
+            return `<span class="${classe}">${texto}</span>`;
+        }
+
+        function selecionarResidencial(item, btn) {
+            if (botaoSelecionado) botaoSelecionado.classList.remove('ativo');
+            const btnEsq = btn || document.getElementById(`btn-esq-${item.nome.replace(/[^a-zA-Z0-9]/g, '-')}`);
+            if (btnEsq) { 
+                btnEsq.classList.add('ativo'); 
+                btnEsq.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
+                botaoSelecionado = btnEsq; 
+            }
+            if (item.regiao && item.regiao !== regiaoAtual) solicitarTroca(true);
+            const el = document.getElementById(item.id_path);
+            if(el) destacarNoMapa(el);
+            exibirPainelDireito(item, el ? el.getAttribute('data-name') : "Região");
+        }
+
+        function destacarNoMapa(el) {
+            if (pathSelecionado) pathSelecionado.classList.remove('path-ativo');
+            el.classList.add('path-ativo');
+            pathSelecionado = el;
+            atualizarTituloTopo();
+        }
+
+        function atualizarTituloTopo() {
+            const display = document.getElementById('display-nome');
+            if (pathSelecionado) display.innerText = pathSelecionado.getAttribute('data-name');
+            else display.innerText = (regiaoAtual === "gsp" ? "Grande São Paulo" : "Interior / Litoral");
+        }
+
+        function solicitarTroca(manterFicha = false) {
+            regiaoAtual = (regiaoAtual === "gsp") ? "esp" : "gsp";
+            if (botaoSelecionado) { botaoSelecionado.classList.remove('ativo'); botaoSelecionado = null; }
+            const cA = document.getElementById('caixa-a'), cB = document.getElementById('caixa-b'), container = document.getElementById('container-mapas');
+            if (cA.classList.contains('pos-cima')) { cA.className = 'caixa-troca pos-baixo'; cB.className = 'caixa-troca pos-cima'; container.appendChild(cA); } 
+            else { cB.className = 'caixa-troca pos-baixo'; cA.className = 'caixa-troca pos-cima'; container.appendChild(cB); }
+            if (!manterFicha) {
+                if (pathSelecionado) pathSelecionado.classList.remove('path-ativo');
+                pathSelecionado = null;
+                document.getElementById('detalhes-residencial').innerHTML = '<div style="text-align: center; color: #999; margin-top: 50px;">Selecione um residencial ou clique em uma região verde do mapa.</div>';
+            }
+            atualizarTituloTopo();
         }
 
         function gerarListaGeral() {
@@ -213,22 +349,45 @@
             DADOS_PLANILHA.forEach(item => {
                 const btn = document.createElement('button');
                 btn.className = 'btRes';
-                btn.innerHTML = `<strong>${item.nome}</strong>`;
-                btn.onclick = () => {
-                    if (botaoSelecionado) botaoSelecionado.classList.remove('ativo');
-                    btn.classList.add('ativo');
-                    botaoSelecionado = btn;
-                    exibirPainelDireito(item);
-                };
+                btn.id = `btn-esq-${item.nome.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                btn.innerHTML = `<strong>${item.nome}</strong> ${obterHtmlEstoque(item.estoque)}`;
+                btn.onclick = () => selecionarResidencial(item, btn);
                 menu.appendChild(btn);
             });
         }
 
-        function copiarLink(url) {
-            navigator.clipboard.writeText(url);
-            const t = document.getElementById("toast");
-            t.className = "show"; setTimeout(() => t.className = "", 2000);
+        function desenhar(idContainer, dados) {
+            const container = document.getElementById(idContainer);
+            if (!container || !dados) return;
+            const paths = dados.paths.map(p => {
+                const temMRV = DADOS_PLANILHA.some(d => d.id_path === p.id.toLowerCase());
+                return `<path id="${p.id}" data-name="${p.name || p.id}" d="${p.d}" class="${p.class || ''} ${(temMRV || p.id === 'grandesaopaulo') ? 'commrv' : ''}"></path>`;
+            }).join('');
+            container.innerHTML = `<svg viewBox="${dados.viewBox}" preserveAspectRatio="xMidYMid meet"><g transform="${dados.transform || ''}">${paths}</g></svg>`;
         }
+
+        function desenharIniciais() {
+            if (typeof MAPA_GSP !== 'undefined') desenhar('caixa-a', MAPA_GSP);
+            if (typeof MAPA_INTERIOR !== 'undefined') desenhar('caixa-b', MAPA_INTERIOR);
+        }
+
+        const mapContainer = document.getElementById('container-mapas');
+        mapContainer.addEventListener('mousemove', (e) => {
+            const p = e.target.closest('.pos-cima path');
+            if (p) document.getElementById('display-nome').innerText = p.getAttribute('data-name');
+            else atualizarTituloTopo();
+        });
+        mapContainer.addEventListener('mouseleave', () => { atualizarTituloTopo(); });
+        mapContainer.addEventListener('click', (e) => {
+            const caixaBaixo = e.target.closest('.pos-baixo');
+            if (caixaBaixo) { solicitarTroca(false); return; }
+            const p = e.target.closest('.pos-cima path');
+            if (p) {
+                if (p.id === "grandesaopaulo") { solicitarTroca(false); return; }
+                const item = DADOS_PLANILHA.find(d => d.id_path === p.id.toLowerCase());
+                if(item && p.classList.contains('commrv')) selecionarResidencial(item, null);
+            }
+        });
 
         window.onload = carregarPlanilha;
     </script>

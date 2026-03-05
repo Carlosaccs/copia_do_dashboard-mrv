@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard MRV SP</title>
     <style>
+        /* --- ESTILOS ORIGINAIS MANTIDOS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body, html { height: 100vh; overflow: hidden; background: #fff; }
         
@@ -27,56 +28,35 @@
         .col-lateral-dir { width: 32%; background: #fff; padding: 15px; overflow-y: auto; border-left: 1px solid #ddd; }
         .col-central { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; overflow: hidden; }
 
-        /* --- BOTÕES LATERAIS (btRes) --- */
         .btRes { 
             width: 100%; padding: 8px 12px; margin-bottom: 6px; background: transparent; 
             border: none; border-left: 5px solid rgb(6, 94, 3); 
             text-align: left; cursor: pointer; font-size: 0.72rem; 
             border-radius: 4px; display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.1s ease-in-out;
-            color: #333;
-            outline: 2px solid transparent; /* Reserva o espaço do contorno */
+            transition: all 0.1s ease-in-out; color: #333; outline: 2px solid transparent;
         }
 
-        /* Hover: Contorno Preto */
-        .btRes:hover { 
-            background: #f0f0f0; 
-            border-left-color: #ff8c00; 
-            outline: 2px solid #000; 
-            outline-offset: -2px;
-        }
+        .btRes:hover { background: #f0f0f0; border-left-color: #ff8c00; outline: 2px solid #000; outline-offset: -2px; }
 
-        /* ATIVO: Fundo Laranja, Borda Verde, Texto Branco, Contorno Verde FIXO */
         .btRes.ativo { 
-            background: #ff8c00 !important; 
-            border-left-color: rgb(6, 94, 3) !important; 
-            color: white !important; 
-            outline: 2px solid rgb(6, 94, 3) !important; 
-            outline-offset: -2px;
-            font-weight: bold;
+            background: #ff8c00 !important; border-left-color: rgb(6, 94, 3) !important; 
+            color: white !important; outline: 2px solid rgb(6, 94, 3) !important; 
+            outline-offset: -2px; font-weight: bold;
         }
 
-        .btRes.ativo strong, 
-        .btRes.ativo .estoque-status { 
-            color: white !important; 
-        }
-        
+        .btRes.ativo strong, .btRes.ativo .estoque-status { color: white !important; }
         .btRes strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; text-transform: uppercase; }
-        
         .estoque-status { font-size: 0.65rem; font-weight: bold; color: #666; white-space: nowrap; }
         .estoque-alerta { color: #d32f2f !important; }
         .estoque-vendido { text-decoration: line-through; color: #999 !important; }
 
-        /* --- RESTANTE DO LAYOUT --- */
         .centro-topo { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; border-bottom: 1px solid #eee; background: #fdfdfd; color: #333; }
-        
         .container-mapas { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; border: none; }
         .caixa-troca { width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border: none; }
         .pos-cima { height: 78%; z-index: 5; }
         .pos-baixo { height: 22%; z-index: 10; cursor: pointer; opacity: 0.8; border: none; }
         
         svg { width: 100%; height: 100%; display: block; padding: 10px; border: none; }
-        
         path { stroke: #fff; stroke-width: 0.5; fill: #838383; transition: all 0.2s ease; pointer-events: all; }
         .pos-cima path:hover { filter: brightness(1.5); stroke: #bbb; cursor: default; }
         .commrv, #grandesaopaulo { fill: rgb(6, 94, 3) !important; cursor: pointer !important; }
@@ -108,7 +88,23 @@
         .btn-abrir { background: #065e03; }
         .btn-copiar { background: #ff8c00; }
 
-        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 10px; position: fixed; z-index: 1000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 0.8rem; }
+        /* --- NOVO: ESTILO DO PREVIEW FLUTUANTE --- */
+        #preview-box {
+            position: fixed;
+            width: 320px;
+            height: 220px;
+            background: #fff;
+            border: 3px solid rgb(6, 94, 3);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: none;
+            z-index: 2000;
+            pointer-events: none; /* Ignora o mouse para não dar conflito no hover */
+            overflow: hidden;
+        }
+        #preview-box iframe { width: 100%; height: 100%; border: none; }
+
+        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 10px; position: fixed; z-index: 3000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 0.8rem; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 1.5s; }
         @keyframes fadein { from {top: 0; opacity: 0;} to {top: 30px; opacity: 1;} }
         @keyframes fadeout { from {top: 30px; opacity: 1;} to {top: 0; opacity: 0;} }
@@ -141,6 +137,11 @@
         </aside>
     </div>
 
+    <div id="preview-box">
+        <div style="background:#f0f0f0; font-size:10px; padding:4px; text-align:center; color:#666;">Carregando visualização...</div>
+        <iframe id="preview-frame"></iframe>
+    </div>
+
     <div class="modal-overlay" id="modal-sobre" onclick="toggleModal(false)">
         <div class="modal-caixa" onclick="event.stopPropagation()">
             <div style="color:rgb(6,94,3); font-weight:bold; font-size:1.3rem; margin-bottom:15px; text-align:center;">Sobre o Projeto</div>
@@ -171,6 +172,33 @@
             return url;
         }
 
+        // --- FUNÇÕES DO PREVIEW ---
+        function mostrarPreview(link, event) {
+            const box = document.getElementById('preview-box');
+            const frame = document.getElementById('preview-frame');
+            const linkLimpo = limparLinkDrive(link);
+
+            if (linkLimpo && linkLimpo.startsWith('http')) {
+                frame.src = linkLimpo;
+                box.style.display = 'block';
+                moverPreview(event);
+            }
+        }
+
+        function moverPreview(e) {
+            const box = document.getElementById('preview-box');
+            // Posiciona a caixa à esquerda do mouse para não tampar o botão
+            box.style.left = (e.clientX - 340) + 'px';
+            box.style.top = (e.clientY - 100) + 'px';
+        }
+
+        function esconderPreview() {
+            const box = document.getElementById('preview-box');
+            const frame = document.getElementById('preview-frame');
+            box.style.display = 'none';
+            frame.src = ''; // Limpa para economizar memória e parar vídeos
+        }
+
         async function carregarPlanilha() {
             try {
                 const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzECvkefpM6aWy0IacqqI6l84_ti6zS1lSjcrgL0J4OcrtWZLb63sh7U1ZTQ4nsqDMeTU5ykl8xtDe/pub?output=csv&v=" + new Date().getTime();
@@ -191,14 +219,12 @@
                         menor_preco: col[8],
                         plantas_txt: `de ${col[9]} até ${col[10]}`,
                         obra: col[11],
-                        loc: col[12], mob: col[13], cult: col[14], com: col[15], saude: col[16],
-                        dica: col[17],
-                        obs: col[18],
                         book_cli: col[19], book_cor: col[20], vid1: col[21], vid2: col[22],
                         p_var: col[23], p_sem: col[24], p_gar: col[25], p_o1: col[26], p_o2: col[27],
                         loc_link: col[28], imp_link: col[29],
                         div1: col[30], div2: col[31], div3: col[32], div4: col[33], div5: col[34],
-                        div6: col[35], div7: col[36], div8: col[37], div9: col[38], div10: col[39]
+                        div6: col[35], div7: col[36], div8: col[37], div9: col[38], div10: col[39],
+                        dica: col[17], obs: col[18]
                     };
                 }).filter(item => item !== null);
 
@@ -208,23 +234,20 @@
             } catch (e) { console.error("Erro no carregamento:", e); }
         }
 
+        // --- ATUALIZADO: RENDERIZAÇÃO DOS LINKS COM HOVER ---
         function renderLinkRow(label, link, ico) {
             if (!link || link.length < 5) return "";
             const linkSeguro = limparLinkDrive(link);
             return `<div class="linha-link">
                 <div class="link-nome"><span>${ico}</span> ${label}</div>
                 <div>
-                    <button class="btn-mini btn-abrir" onclick="window.open('${linkSeguro}', '_blank')">Abrir</button>
+                    <button class="btn-mini btn-abrir" 
+                        onmouseenter="mostrarPreview('${link}', event)"
+                        onmousemove="moverPreview(event)"
+                        onmouseleave="esconderPreview()"
+                        onclick="window.open('${linkSeguro}', '_blank')">Abrir</button>
                     <button class="btn-mini btn-copiar" onclick="copiarLink('${linkSeguro}', '${label}')">Copiar</button>
                 </div>
-            </div>`;
-        }
-
-        function renderDestaque(titulo, texto, ico) {
-            if (!texto || texto.length < 3) return "";
-            return `<div class="destaque-item">
-                <span class="destaque-icon">${ico}</span>
-                <div><span class="destaque-titulo">${titulo}</span>${texto}</div>
             </div>`;
         }
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard MRV SP</title>
     <style>
-        /* --- ESTILOS ORIGINAIS MANTIDOS --- */
+        /* --- ESTILOS ORIGINAIS --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body, html { height: 100vh; overflow: hidden; background: #fff; }
         
@@ -46,9 +46,12 @@
 
         .btRes.ativo strong, .btRes.ativo .estoque-status { color: white !important; }
         .btRes strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; text-transform: uppercase; }
+        
+        /* --- ESTADOS DO ESTOQUE --- */
         .estoque-status { font-size: 0.65rem; font-weight: bold; color: #666; white-space: nowrap; }
         .estoque-alerta { color: #d32f2f !important; }
         .estoque-vendido { text-decoration: line-through; color: #999 !important; }
+        .estoque-lancamento { color: #007bff !important; text-transform: uppercase; } /* Cor Azul para Lançamento */
 
         .centro-topo { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; border-bottom: 1px solid #eee; background: #fdfdfd; color: #333; }
         .container-mapas { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; border: none; }
@@ -76,32 +79,15 @@
         .dica-box { background: #fff5e6; border: 1px solid #ffe0b3; color: #7a5a00; }
         .obs-box { background: #f1f3f5; border-left: 4px solid #adb5bd; color: #495057; }
 
-        .destaque-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 0.72rem; line-height: 1.3; }
-        .destaque-icon { font-size: 1rem; min-width: 20px; }
-        .destaque-titulo { font-weight: bold; color: #065e03; text-transform: uppercase; display: block; font-size: 0.65rem; }
-
         .secao-titulo { font-size: 0.65rem; font-weight: bold; color: #999; text-transform: uppercase; margin: 15px 0 8px 0; display: block; border-top: 1px solid #eee; padding-top: 10px; }
-        
         .linha-link { display: flex; align-items: center; justify-content: space-between; padding: 8px; background: #fff; border: 1px solid #eee; border-radius: 6px; margin-bottom: 6px; gap: 8px; }
         .link-nome { font-size: 0.72rem; font-weight: bold; color: #444; display: flex; align-items: center; gap: 6px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .btn-mini { padding: 6px 10px; border: none; border-radius: 4px; color: white; font-size: 0.62rem; font-weight: bold; cursor: pointer; }
         .btn-abrir { background: #065e03; }
         .btn-copiar { background: #ff8c00; }
 
-        /* --- NOVO: ESTILO DO PREVIEW FLUTUANTE --- */
-        #preview-box {
-            position: fixed;
-            width: 320px;
-            height: 220px;
-            background: #fff;
-            border: 3px solid rgb(6, 94, 3);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            display: none;
-            z-index: 2000;
-            pointer-events: none; /* Ignora o mouse para não dar conflito no hover */
-            overflow: hidden;
-        }
+        /* --- PREVIEW --- */
+        #preview-box { position: fixed; width: 320px; height: 220px; background: #fff; border: 3px solid rgb(6, 94, 3); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: none; z-index: 2000; pointer-events: none; overflow: hidden; }
         #preview-box iframe { width: 100%; height: 100%; border: none; }
 
         #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 4px; padding: 10px; position: fixed; z-index: 3000; left: 50%; top: 30px; transform: translateX(-50%); font-size: 0.8rem; }
@@ -172,12 +158,10 @@
             return url;
         }
 
-        // --- FUNÇÕES DO PREVIEW ---
         function mostrarPreview(link, event) {
             const box = document.getElementById('preview-box');
             const frame = document.getElementById('preview-frame');
             const linkLimpo = limparLinkDrive(link);
-
             if (linkLimpo && linkLimpo.startsWith('http')) {
                 frame.src = linkLimpo;
                 box.style.display = 'block';
@@ -187,7 +171,6 @@
 
         function moverPreview(e) {
             const box = document.getElementById('preview-box');
-            // Posiciona a caixa à esquerda do mouse para não tampar o botão
             box.style.left = (e.clientX - 340) + 'px';
             box.style.top = (e.clientY - 100) + 'px';
         }
@@ -196,7 +179,7 @@
             const box = document.getElementById('preview-box');
             const frame = document.getElementById('preview-frame');
             box.style.display = 'none';
-            frame.src = ''; // Limpa para economizar memória e parar vídeos
+            frame.src = '';
         }
 
         async function carregarPlanilha() {
@@ -234,7 +217,6 @@
             } catch (e) { console.error("Erro no carregamento:", e); }
         }
 
-        // --- ATUALIZADO: RENDERIZAÇÃO DOS LINKS COM HOVER ---
         function renderLinkRow(label, link, ico) {
             if (!link || link.length < 5) return "";
             const linkSeguro = limparLinkDrive(link);
@@ -259,8 +241,26 @@
             });
         }
 
+        // --- ATUALIZADO: LOGICA DO PAINEL DIREITO ---
         function exibirPainelDireito(item, nomeCidade) {
             const painel = document.getElementById('detalhes-residencial');
+            
+            // CASO "N": Modo Informativo / Agrupador
+            if (item.estoque === "N") {
+                painel.innerHTML = `
+                    <div class="ficha-card" style="border-left-color: #065e03;">
+                        <div class="ficha-header" style="justify-content: center; font-size: 1.1rem;">
+                            <span>${item.nome}</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #444; line-height: 1.6; padding: 10px 0;">
+                            ${item.obs || "Nenhuma informação adicional disponível."}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // CASO PADRÃO (Residenciais com estoque ou lançamentos)
             let html = `<div style="font-size:0.75rem; font-weight:bold; color:#065e03; margin-bottom:12px;">MRV em ${nomeCidade}:</div>`;
             
             DADOS_PLANILHA.filter(d => d.id_path === item.id_path && d.nome !== item.nome).forEach(v => {
@@ -316,7 +316,11 @@
             painel.innerHTML = html;
         }
 
+        // --- ATUALIZADO: LOGICA DO TEXTO NO BOTÃO ---
         function obterHtmlEstoque(valor) {
+            if (valor === "N") return ""; // Caso informativo: nada no botão
+            if (valor === "L") return `<span class="estoque-status estoque-lancamento">LANÇAMENTO</span>`;
+            
             let num = parseInt(valor) || 0;
             let texto = (valor === "VENDIDO" || num === 0) ? "VENDIDO" : `restam ${num} un.`;
             let classe = "estoque-status";
